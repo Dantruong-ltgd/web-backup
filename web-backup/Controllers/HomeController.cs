@@ -128,5 +128,42 @@ namespace web_backup.Controllers
 
             return View(room);
         }
+        // --- CÁC TRANG HỖ TRỢ KHÁCH HÀNG ---
+        public IActionResult HelpCenter()
+        {
+            ViewData["Title"] = "Trung Tâm Trợ Giúp";
+            return View();
+        }
+
+        public IActionResult PostingRules()
+        {
+            ViewData["Title"] = "Quy Định Đăng Tin";
+            return View();
+        }
+
+        public IActionResult Pricing()
+        {
+            ViewData["Title"] = "Bảng Giá Dịch Vụ";
+            return View();
+        }
+
+        // --- CÁC TRANG ĐIỀU KHOẢN ---
+        public IActionResult Privacy()
+        {
+            ViewData["Title"] = "Chính Sách Bảo Mật";
+            return View();
+        }
+
+        public IActionResult DisputeResolution()
+        {
+            ViewData["Title"] = "Giải Quyết Tranh Chấp";
+            return View();
+        }
+
+        public IActionResult TermsOfService()
+        {
+            ViewData["Title"] = "Điều Khoản Sử Dụng";
+            return View();
+        }
     }
 }

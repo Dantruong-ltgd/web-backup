@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "Bảng Giá Dịch Vụ";
+}
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-uppercase" style="color: var(--main-purple);">Bảng Giá Dịch Vụ Đăng Tin</h2>
+        <p class="text-muted">Chọn gói tin phù hợp để tiếp cận hàng ngàn khách thuê mỗi ngày</p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+        <!-- Gói Miễn Phí -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center">
+                <h4 class="fw-bold text-dark">Tin Thường</h4>
+                <div class="my-3">
+                    <span class="display-6 fw-bold" style="color: var(--main-purple);">0đ</span>
+                    <span class="text-muted">/ tin</span>
+                </div>
+                <ul class="list-unstyled text-start my-4 d-flex flex-column gap-3 text-muted">
+                    <li><i class="bi bi-check-circle-fill text-success me-2"></i> Hiển thị tin 7 ngày</li>
+                    <li><i class="bi bi-check-circle-fill text-success me-2"></i> Tối đa 5 hình ảnh</li>
+                    <li><i class="bi bi-check-circle-fill text-success me-2"></i> Hỗ trợ tìm kiếm cơ bản</li>
+                </ul>
+                <button class="btn btn-outline-purple rounded-pill w-100 mt-auto py-2">Đăng Tin Ngay</button>
+            </div>
+        </div>
+
+        <!-- Gói VIP Nổi Bật -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100 border-2 shadow rounded-4 p-4 text-center position-relative" style="border-color: var(--main-purple) !important;">
+                <span class="badge badge-gold position-absolute top-0 start-50 translate-middle px-3 py-2 text-uppercase">Phổ Biến Nhất</span>
+                <h4 class="fw-bold text-dark mt-2">Tin VIP Nổi Bật</h4>
+                <div class="my-3">
+                    <span class="display-6 fw-bold" style="color: var(--main-purple);">49.000đ</span>
+                    <span class="text-muted">/ 7 ngày</span>
+                </div>
+                <ul class="list-unstyled text-start my-4 d-flex flex-column gap-3 text-muted">
+                    <li><i class="bi bi-check-circle-fill text-success me-2"></i> Hiển thị trang nhất tìm kiếm</li>
+                    <li><i class="bi bi-check-circle-fill text-success me-2"></i> Badge Tím nổi bật thu hút người xem</li>
+                    <li><i class="bi bi-check-circle-fill text-success me-2"></i> Tối đa 15 hình ảnh sắc nét</li>
+                    <li><i class="bi bi-check-circle-fill text-success me-2"></i> Ưu tiên hỗ trợ kỹ thuật</li>
+                </ul>
+                <button class="btn btn-purple rounded-pill w-100 mt-auto py-2">Chọn Gói VIP</button>
+            </div>
+        </div>
+    </div>
+</div>
