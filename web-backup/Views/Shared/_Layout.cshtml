@@ -38,20 +38,20 @@
                 border: none;
             }
 
-            .btn-teal:hover {
-                background-color: var(--hover-teal);
-                color: #ffffff;
-            }
+                .btn-teal:hover {
+                    background-color: var(--hover-teal);
+                    color: #ffffff;
+                }
 
             .btn-outline-teal {
                 border: 1px solid var(--primary-teal);
                 color: var(--primary-teal);
             }
 
-            .btn-outline-teal:hover {
-                background-color: var(--primary-teal);
-                color: #ffffff;
-            }
+                .btn-outline-teal:hover {
+                    background-color: var(--primary-teal);
+                    color: #ffffff;
+                }
 
             .nav-link-custom {
                 color: #333333;
@@ -59,9 +59,9 @@
                 transition: color 0.2s ease;
             }
 
-            .nav-link-custom:hover {
-                color: var(--primary-teal);
-            }
+                .nav-link-custom:hover {
+                    color: var(--primary-teal);
+                }
     </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -75,8 +75,6 @@
             </a>
 
             <!-- Menu trên màn hình lớn -->
-            <!-- Menu trên màn hình lớn -->
-            <!-- Menu trên màn hình lớn -->
             <nav class="d-none d-md-flex gap-4 fw-semibold">
                 <a href="/" class="text-decoration-none nav-link-custom text-teal">Trang chủ</a>
                 <a href="/Home/BoardingHouse" class="text-decoration-none nav-link-custom text-dark">Phòng trọ</a>
@@ -85,17 +83,25 @@
                 <a href="/Home/SharedRoom" class="text-decoration-none nav-link-custom text-dark">Ở ghép</a>
             </nav>
 
-            <!-- Nút Đăng nhập -->
+            <!-- Nút Đăng nhập / Tài khoản -->
             <div class="d-flex align-items-center gap-2">
                 @if (SignInManager.IsSignedIn(User))
                 {
                     var currentUser = await UserManager.GetUserAsync(User);
                     <div class="dropdown">
-                        <button class="btn btn-outline-teal dropdown-toggle rounded-pill px-3" type="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle me-1"></i> Chào, <strong>@(currentUser?.FullName ?? User.Identity?.Name)</strong>
+                        <button class="btn btn-outline-teal dropdown-toggle rounded-pill px-3 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
+                            @if (currentUser != null && !string.IsNullOrEmpty(currentUser.AvatarUrl))
+                            {
+                                <img src="@currentUser.AvatarUrl" alt="Avatar" class="rounded-circle object-fit-cover border" style="width: 26px; height: 26px;" />
+                            }
+                            else
+                            {
+                                <i class="bi bi-person-circle fs-6"></i>
+                            }
+                            <span>Chào, <strong>@(currentUser?.FullName ?? User.Identity?.Name)</strong></span>
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3">
-                            <!-- 1. Dòng Thông tin cá nhân mới thêm -->
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-1">
+                            <!-- 1. Dòng Thông tin cá nhân -->
                             <li>
                                 <a class="dropdown-item px-3 py-2" asp-controller="Account" asp-action="Profile">
                                     <i class="bi bi-person-badge me-2 text-primary"></i>Thông tin cá nhân
@@ -179,10 +185,10 @@
                 <div class="col-lg-3 col-md-6">
                     <h5 class="mb-3">Đối Tác & Mạng Xã Hội</h5>
                     <div class="d-flex gap-2">
-                        <a href="https://facebook.com" target="_blank" class="social-icon" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="https://www.facebook.com/share/19Pwk3gd3J/?mibextid=wwXIfr" target="_blank" class="social-icon" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
                         <a href="https://x.com" target="_blank" class="social-icon" aria-label="X"><i class="bi bi-twitter-x"></i></a>
-                        <a href="https://instagram.com" target="_blank" class="social-icon" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-                        <a href="https://youtube.com" target="_blank" class="social-icon" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+                        <a href="https://www.instagram.com/baptruong2530/" target="_blank" class="social-icon" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="https://www.youtube.com/" target="_blank" class="social-icon" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
                     </div>
                 </div>
 

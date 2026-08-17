@@ -8,5 +8,6 @@ namespace web_backup.Models
 
         // Quận/Huyện mà chủ trọ được phép quản lý (Ví dụ: "Bình Thạnh", "Quận 1")
         public string? District { get; set; }
+        public string? AvatarUrl { get; set; }
     }
 }
