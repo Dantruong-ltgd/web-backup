@@ -40,9 +40,15 @@
                             </label>
                             <select name="categoryId" class="form-select bg-light border-0 py-2 shadow-none">
                                 <option value="">-- Tất cả loại phòng --</option>
+                                @{
+                                    var currentCategory = Context.Request.Query["categoryId"].ToString();
+                                }
+
+                                <option value="nha-nguyen-can" selected="@(currentCategory == "nha-nguyen-can" ? "selected" : null)">Nhà nguyên căn</option>
+                                <option value="o-ghep" selected="@(currentCategory == "o-ghep" ? "selected" : null)">Ở ghép</option>
+
                                 @if (ViewBag.Categories != null)
                                 {
-                                    var currentCategory = Context.Request.Query["categoryId"].ToString();
                                     foreach (var cat in (IEnumerable<web_backup.Models.Category>)ViewBag.Categories)
                                     {
                                         var isSelected = currentCategory == cat.Id.ToString() ? "selected" : null;
@@ -181,9 +187,6 @@
             <h3 class="fw-bold text-dark m-0">
                 <i class="bi bi-star-fill text-warning me-2"></i>PHÒNG TRỌ NỔI BẬT
             </h3>
-            <span class="badge text-white px-3 py-2 rounded-pill fw-bold" style="background-color: #7c3aed;">
-                @featuredRooms.Count bài đăng VIP
-            </span>
         </div>
 
         @if (!featuredRooms.Any())

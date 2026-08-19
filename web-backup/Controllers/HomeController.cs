@@ -14,15 +14,14 @@ namespace web_backup.Controllers
             _context = context;
         }
 
-        // 1. TRANG CHỦ: Chỉ hiển thị các phòng ĐÃ ĐƯỢC THẢ TIM (IsFeatured = true)
+        // 1. TRANG CHỦ: Chỉ hiển thị các phòng ĐÃ ĐƯỢC THẢ TIM (IsFeatured = true) VÀ CHƯA ĐƯỢC THUÊ/MUA (!IsRented)
         public async Task<IActionResult> Index()
         {
             ViewBag.Categories = await _context.Categories.ToListAsync();
 
-            // Lọc điều kiện .Where(r => r.IsFeatured)
             var favoritedRooms = await _context.Rooms
                 .Include(r => r.Category)
-                .Where(r => r.IsFeatured)
+                .Where(r => r.IsFeatured && !r.IsRented) // 👈 Lọc ẩn các phòng đã thuê/mua
                 .OrderByDescending(r => r.Id)
                 .ToListAsync();
 
@@ -44,7 +43,7 @@ namespace web_backup.Controllers
             return Json(new { success = true, isFeatured = room.IsFeatured });
         }
 
-        // 2. TRANG PHÒNG TRỌ
+        // 2. TRANG PHÒNG TRỌ: Chỉ hiện các phòng CHƯA THUÊ/MUA
         public async Task<IActionResult> BoardingHouse()
         {
             ViewData["Title"] = "Phòng Trọ";
@@ -52,13 +51,13 @@ namespace web_backup.Controllers
 
             var rooms = await _context.Rooms
                 .Include(r => r.Category)
-                .Where(r => r.Category != null && (r.Category.Name.Contains("Phòng trọ") || r.Category.Name.Contains("Trọ")))
+                .Where(r => !r.IsRented && r.Category != null && (r.Category.Name.Contains("Phòng trọ") || r.Category.Name.Contains("Trọ"))) // 👈 Lọc !r.IsRented
                 .ToListAsync();
 
             return View("CategoryRooms", rooms);
         }
 
-        // 3. TRANG CHUNG CƯ
+        // 3. TRANG CHUNG CƯ: Chỉ hiện các phòng CHƯA THUÊ/MUA
         public async Task<IActionResult> Apartment()
         {
             ViewData["Title"] = "Chung Cư";
@@ -66,13 +65,13 @@ namespace web_backup.Controllers
 
             var rooms = await _context.Rooms
                 .Include(r => r.Category)
-                .Where(r => r.Category != null && (r.Category.Name.Contains("Chung cư") || r.Category.Name.Contains("Căn hộ")))
+                .Where(r => !r.IsRented && r.Category != null && (r.Category.Name.Contains("Chung cư") || r.Category.Name.Contains("Căn hộ"))) // 👈 Lọc !r.IsRented
                 .ToListAsync();
 
             return View("CategoryRooms", rooms);
         }
 
-        // 4. TRANG NHÀ NGUYÊN CĂN
+        // 4. TRANG NHÀ NGUYÊN CĂN: Chỉ hiện các phòng CHƯA THUÊ/MUA
         public async Task<IActionResult> House()
         {
             ViewData["Title"] = "Nhà Nguyên Căn";
@@ -80,13 +79,13 @@ namespace web_backup.Controllers
 
             var rooms = await _context.Rooms
                 .Include(r => r.Category)
-                .Where(r => r.Category != null && (r.Category.Name.Contains("Nhà nguyên căn") || r.Category.Name.Contains("Nguyên căn")))
+                .Where(r => !r.IsRented && r.Category != null && (r.Category.Name.Contains("Nhà nguyên căn") || r.Category.Name.Contains("Nguyên căn"))) // 👈 Lọc !r.IsRented
                 .ToListAsync();
 
             return View("CategoryRooms", rooms);
         }
 
-        // 5. TRANG Ở GHÉP
+        // 5. TRANG Ở GHÉP: Chỉ hiện các phòng CHƯA THUÊ/MUA
         public async Task<IActionResult> SharedRoom()
         {
             ViewData["Title"] = "Ở Ghép";
@@ -94,18 +93,22 @@ namespace web_backup.Controllers
 
             var rooms = await _context.Rooms
                 .Include(r => r.Category)
-                .Where(r => r.Category != null && (r.Category.Name.Contains("Ở ghép") || r.Category.Name.Contains("Ghép")))
+                .Where(r => !r.IsRented && r.Category != null && (r.Category.Name.Contains("Ở ghép") || r.Category.Name.Contains("Ghép"))) // 👈 Lọc !r.IsRented
                 .ToListAsync();
 
             return View("CategoryRooms", rooms);
         }
 
-        // 6. XỬ LÝ TÌM KIẾM
+        // 6. XỬ LÝ TÌM KIẾM: Loại bỏ phòng ĐÃ THUÊ/MUA khỏi kết quả tìm kiếm
         public async Task<IActionResult> Search(string? keyword, int? categoryId, string? maxPrice)
         {
             ViewBag.Categories = await _context.Categories.ToListAsync();
 
-            var query = _context.Rooms.Include(r => r.Category).AsQueryable();
+            // Mặc định chỉ lọc các phòng CHƯA THUÊ/MUA
+            var query = _context.Rooms
+                .Include(r => r.Category)
+                .Where(r => !r.IsRented) // 👈 Lọc !r.IsRented
+                .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(keyword))
             {
@@ -130,14 +133,14 @@ namespace web_backup.Controllers
             return View("Index", results);
         }
 
-        // GET: /Home/Details/5
+        // GET: /Home/Details/5 (Không cho truy cập trang chi tiết phòng đã thuê/mua)
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
 
             var room = await _context.Rooms
                 .Include(r => r.Category)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == id && !m.IsRented); // 👈 Lọc !m.IsRented
 
             if (room == null) return NotFound();
 

@@ -88,7 +88,8 @@ namespace web_backup.Controllers
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", room.CategoryId);
             return View(room);
         }
-        // 1. Trang hiển thị Form thêm phòng mới (GET)
+
+        // 4. Trang hiển thị Form thêm phòng mới (GET)
         public async Task<IActionResult> Create()
         {
             var currentUser = await _userManager.GetUserAsync(User);
@@ -100,7 +101,7 @@ namespace web_backup.Controllers
             return View();
         }
 
-        // 2. Xử lý lưu phòng mới (POST)
+        // 5. Xử lý lưu phòng mới (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Room room)
@@ -122,6 +123,55 @@ namespace web_backup.Controllers
 
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", room.CategoryId);
             return View(room);
+        }
+
+        // 6. Xử lý bật/tắt trạng thái Đã thuê / Mua qua AJAX (POST)
+        [HttpPost]
+        public async Task<IActionResult> ToggleStatus(int id)
+        {
+            var room = await _context.Rooms.FindAsync(id);
+            if (room == null) return NotFound();
+
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            // Kiểm tra phân quyền theo Quận nếu là Chủ trọ
+            if (User.IsInRole("ChuTro") && !string.Equals(room.District, currentUser?.District, StringComparison.OrdinalIgnoreCase))
+            {
+                return Forbid();
+            }
+
+            // Đảo trạng thái Đã thuê/Mua
+            room.IsRented = !room.IsRented;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true, isRented = room.IsRented });
+        }
+
+        // 7. Xử lý xóa phòng qua AJAX (POST)
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var room = await _context.Rooms.FindAsync(id);
+            if (room == null) return NotFound();
+
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            // Kiểm tra phân quyền theo Quận nếu là Chủ trọ
+            if (User.IsInRole("ChuTro") && !string.Equals(room.District, currentUser?.District, StringComparison.OrdinalIgnoreCase))
+            {
+                return Forbid();
+            }
+
+            try
+            {
+                _context.Rooms.Remove(room);
+                await _context.SaveChangesAsync();
+                return Ok(new { success = true });
+            }
+            catch (Exception)
+            {
+                return BadRequest(new { success = false, message = "Không thể xóa phòng này vì đã có dữ liệu đặt phòng/hóa đơn liên quan!" });
+            }
         }
     }
 }

@@ -19,7 +19,7 @@ namespace web_backup.Controllers
             _userManager = userManager;
         }
 
-        // GET: /Payment/Checkout?roomId=1&type=Deposit (hoặc Buyout)
+        // GET: /Payment/Checkout?roomId=1&type=Deposit
         public async Task<IActionResult> Checkout(int roomId, string type = "Deposit")
         {
             var room = await _context.Rooms
@@ -30,7 +30,6 @@ namespace web_backup.Controllers
 
             var user = await _userManager.GetUserAsync(User);
 
-            // Kiểm tra: Chỉ Chung cư hoặc Nhà nguyên căn mới được mua đứt
             if (type == "Buyout")
             {
                 bool isBuyoutCategory = room.Category != null &&
@@ -43,14 +42,12 @@ namespace web_backup.Controllers
                 }
             }
 
-            // Tính tiền: Cọc 20% hoặc Mua đứt 100%
             decimal paymentAmount = type == "Buyout" ? (room.SalePrice ?? 0) : (room.Price * 0.2m);
 
             ViewBag.TransactionType = type;
             ViewBag.PaymentAmount = paymentAmount;
             ViewBag.User = user;
 
-            // Ép đường dẫn tuyệt đối tới file View
             return View("~/Views/Payment/Checkout.cshtml", room);
         }
 
@@ -64,7 +61,9 @@ namespace web_backup.Controllers
 
             if (room == null || user == null) return NotFound();
 
-            // 1. Tạo đơn Đặt chỗ
+            // 📌 BỔ SUNG: TỰ ĐỘNG ĐÁNH DẤU PHÒNG ĐÃ THUÊ / MUA ĐỂ ẨN KHỎI TRANG CHỦ
+            room.IsRented = true;
+
             var booking = new Booking
             {
                 RoomId = roomId,
@@ -77,9 +76,12 @@ namespace web_backup.Controllers
             };
 
             _context.Bookings.Add(booking);
+
+            // Cập nhật trạng thái phòng vào Database cùng lúc với Booking
+            _context.Rooms.Update(room);
+
             await _context.SaveChangesAsync();
 
-            // 2. Tạo Hóa đơn
             var invoice = new Invoice
             {
                 InvoiceCode = "HD" + DateTime.Now.ToString("yyyyMMddHHmmss"),
@@ -94,7 +96,6 @@ namespace web_backup.Controllers
             _context.Invoices.Add(invoice);
             await _context.SaveChangesAsync();
 
-            // Chuyển hướng sang trang In hóa đơn
             return RedirectToAction(nameof(PrintInvoice), new { id = invoice.Id });
         }
 

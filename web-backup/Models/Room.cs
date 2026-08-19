@@ -15,6 +15,7 @@ namespace web_backup.Models
         public string Address { get; set; } = string.Empty;
         public string District { get; set; } = string.Empty;
         public string ImageUrl { get; set; } = string.Empty;
+
         public string? UserId { get; set; }
 
         [ForeignKey("UserId")]
@@ -25,6 +26,9 @@ namespace web_backup.Models
 
         // 📌 THÊM: ĐÁNH DẤU YÊU THÍCH -> TỰ ĐỘNG HIỂN THỊ Ở DÒNG "PHÒNG NỔI BẬT" TRANG CHỦ
         public bool IsFeatured { get; set; } = false;
+
+        // 📌 BỔ SUNG: TRẠNG THÁI ĐÃ THUÊ / MUA (ĐỂ KHẮC PHỤC LỖI CS1061)
+        public bool IsRented { get; set; } = false;
 
         // 📌 THÊM: MUA ĐỨT (ÁP DỤNG CHO DÀNH CHO CHUNG CƯ VÀ NHÀ NGUYÊN CĂN)
         public bool IsForSale { get; set; } = false;
