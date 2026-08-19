@@ -43,20 +43,54 @@ namespace web_backup.Data
                 await userManager.AddToRoleAsync(admin, "Admin");
             }
 
-            // 2.2 Chủ Trọ (Quản lý phòng ở Bình Thạnh)
-            var chuTroEmail = "chutro_binhthanh@ptsg.com";
-            if (await userManager.FindByEmailAsync(chuTroEmail) == null)
+            // 2.2 Tạo tài khoản Chủ Trọ cho TẤT CẢ các quận/huyện tại TP.HCM
+            var districts = new[]
             {
-                var chuTro = new ApplicationUser
+                "Quận 1", "Quận 3", "Quận 4", "Quận 5", "Quận 6", "Quận 7", "Quận 8",
+                "Quận 10", "Quận 11", "Quận 12", "Bình Thạnh", "Gò Vấp", "Tân Bình",
+                "Tân Phú", "Phú Nhuận", "Bình Tân", "TP. Thủ Đức"
+            };
+
+            foreach (var district in districts)
+            {
+                // Chuẩn hóa tên email (VD: chutro_q1@ptsg.com, chutro_binhthanh@ptsg.com)
+                string slug = district.ToLower()
+                    .Replace(" ", "")
+                    .Replace(".", "")
+                    .Replace("quận", "q")
+                    .Replace("bìnhthạnh", "binhthanh")
+                    .Replace("gòvấp", "govap")
+                    .Replace("tânbình", "tanbinh")
+                    .Replace("tânphú", "tanphu")
+                    .Replace("phúnhuận", "phunhuan")
+                    .Replace("bìnhtân", "binhtan")
+                    .Replace("tpthủđức", "thuduc");
+
+                string chuTroEmail = $"chutro_{slug}@ptsg.com";
+
+                if (await userManager.FindByEmailAsync(chuTroEmail) == null)
                 {
-                    UserName = chuTroEmail,
-                    Email = chuTroEmail,
-                    FullName = "Chủ Trọ Bình Thạnh",
-                    District = "Bình Thạnh",
-                    EmailConfirmed = true
-                };
-                await userManager.CreateAsync(chuTro, "ChuTro@123");
-                await userManager.AddToRoleAsync(chuTro, "ChuTro");
+                    // Chỉ riêng Chủ trọ Quận 1 và Quận 7 được cấp gói VIP
+                    bool isVip = (district == "Quận 1" || district == "Quận 7");
+
+                    var chuTro = new ApplicationUser
+                    {
+                        UserName = chuTroEmail,
+                        Email = chuTroEmail,
+                        FullName = $"Chủ Trọ {district}",
+                        District = district,
+                        PhoneNumber = "090" + new Random().Next(1000000, 9999999),
+                        IsVip = isVip,
+                        VipExpiryDate = isVip ? DateTime.Now.AddDays(30) : null,
+                        EmailConfirmed = true
+                    };
+
+                    var createResult = await userManager.CreateAsync(chuTro, "ChuTro@123");
+                    if (createResult.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(chuTro, "ChuTro");
+                    }
+                }
             }
 
             // 2.3 Người Xem
@@ -101,8 +135,44 @@ namespace web_backup.Data
                 var catNhaNC = await context.Categories.FirstOrDefaultAsync(c => c.Name == "Nhà nguyên căn");
                 var catOGhep = await context.Categories.FirstOrDefaultAsync(c => c.Name == "Ở ghép");
 
+                // Lấy User ID của các chủ trọ
+                var userQ1 = await userManager.FindByEmailAsync("chutro_q1@ptsg.com");
+                var userQ7 = await userManager.FindByEmailAsync("chutro_q7@ptsg.com");
+                var userBinhThanh = await userManager.FindByEmailAsync("chutro_binhthanh@ptsg.com");
+
                 var sampleRooms = new List<Room>
                 {
+                    // Bài đăng VIP 1: Thuộc Chủ trọ Quận 1 (Hiển thị nổi bật trên Trang chủ)
+                    new Room
+                    {
+                        Title = "Căn hộ chung cư 2 phòng ngủ cao cấp Quận 1",
+                        Price = 8500000,
+                        Area = 65,
+                        District = "Quận 1",
+                        Address = "45 Nguyễn Thị Minh Khai, P. Bến Nghé",
+                        ImageUrl = "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=800",
+                        IsOwner = true,
+                        HasMezzanine = false,
+                        IsFeatured = true, // Gói VIP
+                        UserId = userQ1?.Id,
+                        CategoryId = catChungCu?.Id ?? 2
+                    },
+                    // Bài đăng VIP 2: Thuộc Chủ trọ Quận 7 (Hiển thị nổi bật trên Trang chủ)
+                    new Room
+                    {
+                        Title = "Phòng trọ cao cấp gác lửng gần Lotte Mart Quận 7",
+                        Price = 4500000,
+                        Area = 30,
+                        District = "Quận 7",
+                        Address = "1041 Nguyễn Thị Thập, P. Tân Phong",
+                        ImageUrl = "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=800",
+                        IsOwner = true,
+                        HasMezzanine = true,
+                        IsFeatured = true, // Gói VIP
+                        UserId = userQ7?.Id,
+                        CategoryId = catPhongTro?.Id ?? 1
+                    },
+                    // Bài đăng thường: Thuộc Chủ trọ Bình Thạnh (Không hiển thị ở Trang chủ mới)
                     new Room
                     {
                         Title = "Phòng trọ gác lửng đầy đủ tiện nghi",
@@ -113,19 +183,9 @@ namespace web_backup.Data
                         ImageUrl = "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=800",
                         IsOwner = true,
                         HasMezzanine = true,
+                        IsFeatured = false,
+                        UserId = userBinhThanh?.Id,
                         CategoryId = catPhongTro?.Id ?? 1
-                    },
-                    new Room
-                    {
-                        Title = "Căn hộ chung cư 2 phòng ngủ cao cấp",
-                        Price = 8500000,
-                        Area = 65,
-                        District = "Quận 1",
-                        Address = "45 Nguyễn Thị Minh Khai, P. Bến Nghé",
-                        ImageUrl = "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=800",
-                        IsOwner = true,
-                        HasMezzanine = false,
-                        CategoryId = catChungCu?.Id ?? 2
                     },
                     new Room
                     {
@@ -137,6 +197,8 @@ namespace web_backup.Data
                         ImageUrl = "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800",
                         IsOwner = true,
                         HasMezzanine = false,
+                        IsFeatured = false,
+                        UserId = userBinhThanh?.Id,
                         CategoryId = catNhaNC?.Id ?? 3
                     },
                     new Room
@@ -149,6 +211,8 @@ namespace web_backup.Data
                         ImageUrl = "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?q=80&w=800",
                         IsOwner = false,
                         HasMezzanine = false,
+                        IsFeatured = false,
+                        UserId = userBinhThanh?.Id,
                         CategoryId = catOGhep?.Id ?? 4
                     }
                 };

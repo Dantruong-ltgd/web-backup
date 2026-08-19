@@ -1,0 +1,90 @@
+﻿@model web_backup.Models.Room
+@{
+    ViewData["Title"] = "Thanh toán đặt cọc";
+    var transactionType = ViewBag.TransactionType as string ?? "Deposit";
+    decimal paymentAmount = ViewBag.PaymentAmount != null ? (decimal)ViewBag.PaymentAmount : 0;
+    var user = ViewBag.User as web_backup.Models.ApplicationUser;
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="card-header text-white p-4" style="background-color: #0d7a75;">
+                    <h4 class="mb-0 fw-bold"><i class="bi bi-credit-card-2-front me-2"></i>XÁC NHẬN THANH TOÁN</h4>
+                </div>
+
+                <div class="card-body p-4">
+                    <!-- Thông tin phòng -->
+                    <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
+                        <img src="@Model.ImageUrl" class="rounded-3 me-3" style="width: 90px; height: 75px; object-fit: cover;" alt="@Model.Title" />
+                        <div>
+                            <span class="badge bg-light text-dark border mb-1">@(Model.Category?.Name ?? "Phòng trọ")</span>
+                            <h5 class="fw-bold mb-1 text-dark">@Model.Title</h5>
+                            <p class="text-muted small mb-0"><i class="bi bi-geo-alt text-danger me-1"></i>@Model.Address, @Model.District</p>
+                        </div>
+                    </div>
+
+                    <!-- Thông tin khách hàng -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-dark mb-2"><i class="bi bi-person-fill text-secondary me-1"></i>Thông tin người thanh toán</h6>
+                        <div class="bg-light p-3 rounded-3 small">
+                            <div><strong>Họ tên:</strong> @(user?.FullName ?? user?.UserName ?? "Khách hàng")</div>
+                            <div><strong>Số điện thoại:</strong> @(user?.PhoneNumber ?? "Chưa cập nhật")</div>
+                        </div>
+                    </div>
+
+                    <!-- Chi tiết khoản phí -->
+                    <div class="bg-light p-3 rounded-3 mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Loại giao dịch:</span>
+                            <strong class="text-primary">@(transactionType == "Buyout" ? "Mua đứt" : "Đặt cọc giữ chỗ (20%)")</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Giá niêm yết:</span>
+                            <span>@Model.Price.ToString("N0") VNĐ/tháng</span>
+                        </div>
+                        <hr class="my-2">
+                        <div class="d-flex justify-content-between align-items-center fs-5">
+                            <span class="fw-bold text-dark">Số tiền cần thanh toán:</span>
+                            <span class="fw-bold text-danger fs-4">@paymentAmount.ToString("N0") VNĐ</span>
+                        </div>
+                    </div>
+
+                    <!-- Form xử lý ProcessPayment -->
+                    <form asp-controller="Payment" asp-action="ProcessPayment" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="roomId" value="@Model.Id" />
+                        <input type="hidden" name="transactionType" value="@transactionType" />
+                        <input type="hidden" name="amount" value="@paymentAmount" />
+
+                        <h6 class="fw-bold mb-3"><i class="bi bi-wallet2 me-1"></i>Chọn phương thức thanh toán</h6>
+
+                        <div class="form-check p-3 border rounded-3 mb-2 d-flex align-items-center">
+                            <input class="form-check-input me-3 ms-0" type="radio" name="paymentMethod" id="momo" value="MoMo" checked>
+                            <label class="form-check-label w-100 fw-semibold" for="momo">
+                                <i class="bi bi-qr-code-scan me-2 text-danger fs-5"></i> Ví MoMo / Mã QR
+                            </label>
+                        </div>
+
+                        <div class="form-check p-3 border rounded-3 mb-4 d-flex align-items-center">
+                            <input class="form-check-input me-3 ms-0" type="radio" name="paymentMethod" id="vnpay" value="VNPay">
+                            <label class="form-check-label w-100 fw-semibold" for="vnpay">
+                                <i class="bi bi-bank me-2 text-primary fs-5"></i> Cổng thanh toán VNPay
+                            </label>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn text-white py-3 rounded-pill fw-bold shadow-sm" style="background-color: #0d7a75;">
+                                <i class="bi bi-shield-check me-2"></i>Xác nhận & Thanh toán
+                            </button>
+                            <a href="/Home/Details/@Model.Id" class="btn btn-outline-secondary py-2 rounded-pill text-center">
+                                Hủy bỏ
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

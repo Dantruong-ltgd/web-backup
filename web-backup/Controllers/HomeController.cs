@@ -14,20 +14,34 @@ namespace web_backup.Controllers
             _context = context;
         }
 
-        // 1. TRANG CHỦ: Chỉ hiển thị các căn nổi bật (gồm tất cả các loại phòng)
+        // 1. TRANG CHỦ: Chỉ hiển thị các phòng ĐÃ ĐƯỢC THẢ TIM (IsFeatured = true)
         public async Task<IActionResult> Index()
         {
-            // Lấy danh sách Loại phòng nạp vào Dropdown tìm kiếm
             ViewBag.Categories = await _context.Categories.ToListAsync();
 
-            // Lấy tất cả phòng (hoặc lọc theo tiêu chí nổi bật như phòng mới nhất/chính chủ)
-            var featuredRooms = await _context.Rooms
+            // Lọc điều kiện .Where(r => r.IsFeatured)
+            var favoritedRooms = await _context.Rooms
                 .Include(r => r.Category)
-                .OrderByDescending(r => r.Id) // Bạn có thể thêm .Where(r => r.IsFeatured) nếu có thuộc tính IsFeatured
-                .Take(6) // Lấy 6 căn nổi bật nhất
+                .Where(r => r.IsFeatured)
+                .OrderByDescending(r => r.Id)
                 .ToListAsync();
 
-            return View(featuredRooms);
+            return View(favoritedRooms);
+        }
+
+        // 📌 BỔ SUNG: XỬ LÝ THẢ TIM YÊU THÍCH (TỰ ĐỘNG ĐƯA LÊN DÒNG PHÒNG NỔI BẬT TRANG CHỦ)
+        [HttpPost]
+        public async Task<IActionResult> ToggleFavorite(int id)
+        {
+            var room = await _context.Rooms.FindAsync(id);
+            if (room == null)
+                return Json(new { success = false, message = "Không tìm thấy thông tin phòng!" });
+
+            // Đảo trạng thái Yêu thích / Nổi bật
+            room.IsFeatured = !room.IsFeatured;
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true, isFeatured = room.IsFeatured });
         }
 
         // 2. TRANG PHÒNG TRỌ
@@ -115,6 +129,7 @@ namespace web_backup.Controllers
             var results = await query.ToListAsync();
             return View("Index", results);
         }
+
         // GET: /Home/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -128,6 +143,7 @@ namespace web_backup.Controllers
 
             return View(room);
         }
+
         // --- CÁC TRANG HỖ TRỢ KHÁCH HÀNG ---
         public IActionResult HelpCenter()
         {

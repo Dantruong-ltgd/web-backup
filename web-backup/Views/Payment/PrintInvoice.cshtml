@@ -1,0 +1,113 @@
+﻿@model web_backup.Models.Invoice
+@{
+    Layout = null; // Trang in không dùng Layout chung
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <title>Hóa đơn - @Model.InvoiceCode</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+            body {
+                background-color: #f8f9fa;
+            }
+
+            .invoice-box {
+                max-width: 800px;
+                margin: 30px auto;
+                padding: 30px;
+                background: #fff;
+                border-radius: 12px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            }
+
+            @@media print {
+                .no-print {
+                    display: none !important;
+                }
+
+                body {
+                    background: #fff;
+                }
+
+                .invoice-box {
+                    box-shadow: none;
+                    margin: 0;
+                    padding: 0;
+                }
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="text-center my-3 no-print">
+            <button onclick="window.print()" class="btn btn-primary rounded-pill px-4 me-2"><i class="bi bi-printer-fill me-2"></i>In Hóa Đơn (PDF)</button>
+            <a href="/" class="btn btn-outline-secondary rounded-pill px-4">Trở về Trang chủ</a>
+        </div>
+
+        <div class="invoice-box">
+            <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+                <div>
+                    <h2 class="fw-bold text-primary mb-0"><i class="bi bi-house-door-fill me-2"></i>PT-SG SYSTEM</h2>
+                    <small class="text-muted">Kênh Tìm Kiếm Phòng Trọ & Bất Động Sản HCMC</small>
+                </div>
+                <div class="text-end">
+                    <h4 class="fw-bold text-uppercase mb-0 text-success">HÓA ĐƠN THANH TOÁN</h4>
+                    <span class="badge bg-light text-dark border">Mã: @Model.InvoiceCode</span>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-6">
+                    <h6 class="fw-bold text-secondary">THÔNG TIN KHÁCH HÀNG:</h6>
+                    <p class="mb-1"><strong>Họ tên:</strong> @Model.CustomerName</p>
+                    <p class="mb-1"><strong>Số điện thoại:</strong> @Model.CustomerPhone</p>
+                    <p class="mb-0"><strong>Thời gian:</strong> @Model.CreatedDate.ToString("dd/MM/yyyy HH:mm")</p>
+                </div>
+                <div class="col-6 text-end">
+                    <h6 class="fw-bold text-secondary">HÌNH THỨC THANH TOÁN:</h6>
+                    <p class="mb-1"><strong>Phương thức:</strong> @Model.Booking?.PaymentMethod</p>
+                    <p class="mb-0"><strong>Trạng thái:</strong> <span class="badge bg-success">ĐÃ THANH TOÁN</span></p>
+                </div>
+            </div>
+
+            <table class="table table-bordered align-middle mb-4">
+                <thead class="table-light">
+                    <tr>
+                        <th>Nội dung thanh toán</th>
+                        <th>Loại giao dịch</th>
+                        <th class="text-end">Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <strong>@Model.Booking?.Room?.Title</strong><br />
+                            <small class="text-muted">@Model.Booking?.Room?.Address</small>
+                        </td>
+                        <td>
+                            @(Model.Booking?.TransactionType == "Buyout" ? "Thanh toán MUA ĐỨT" : "Đặt cọc giữ chỗ (20%)")
+                        </td>
+                        <td class="text-end fw-bold text-primary">
+                            @Model.TotalAmount.ToString("N0") VNĐ
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2" class="text-end fw-bold fs-5">TỔNG CỘNG:</td>
+                        <td class="text-end fw-bold fs-5 text-danger">@Model.TotalAmount.ToString("N0") VNĐ</td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <div class="border-top pt-3 text-center text-muted small">
+                <p class="mb-0">Cảm ơn quý khách đã giao dịch tại PT-SG! Hotline hỗ trợ: <strong>0901 234 567</strong></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

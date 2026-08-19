@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using web_backup.Data;
 
@@ -11,9 +12,11 @@ using web_backup.Data;
 namespace web_backup.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260819141033_AddBookingAndInvoiceTables")]
+    partial class AddBookingAndInvoiceTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -231,9 +234,6 @@ namespace web_backup.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsVip")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -266,9 +266,6 @@ namespace web_backup.Migrations
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
-
-                    b.Property<DateTime?>("VipExpiryDate")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -445,16 +442,11 @@ namespace web_backup.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("OwnerId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Rooms");
 
@@ -614,15 +606,9 @@ namespace web_backup.Migrations
                         .WithMany()
                         .HasForeignKey("OwnerId");
 
-                    b.HasOne("web_backup.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
                     b.Navigation("Category");
 
                     b.Navigation("Owner");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("web_backup.Models.Category", b =>
