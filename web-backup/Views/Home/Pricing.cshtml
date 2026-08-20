@@ -2,46 +2,82 @@
     ViewData["Title"] = "Bảng Giá Dịch Vụ";
 }
 
-<div class="container py-5">
+<div class="container my-5">
     <div class="text-center mb-5">
-        <h2 class="fw-bold text-uppercase" style="color: var(--main-purple);">Bảng Giá Dịch Vụ Đăng Tin</h2>
+        <h2 class="fw-bold text-uppercase mb-2" style="color: #7c3aed;">BẢNG GIÁ DỊCH VỤ ĐĂNG TIN</h2>
         <p class="text-muted">Chọn gói tin phù hợp để tiếp cận hàng ngàn khách thuê mỗi ngày</p>
     </div>
 
-    <div class="row g-4 justify-content-center">
-        <!-- Gói Miễn Phí -->
-        <div class="col-lg-4 col-md-6">
-            <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center">
-                <h4 class="fw-bold text-dark">Tin Thường</h4>
-                <div class="my-3">
-                    <span class="display-6 fw-bold" style="color: var(--main-purple);">0đ</span>
+    <div class="row g-4 justify-content-center align-items-center">
+        <!-- GÓI TIN THƯỜNG -->
+        <div class="col-lg-5 col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center h-100">
+                <h3 class="fw-bold text-dark mb-3">Tin Thường</h3>
+                <div class="mb-4">
+                    <span class="fs-1 fw-bold" style="color: #7c3aed;">0đ</span>
                     <span class="text-muted">/ tin</span>
                 </div>
-                <ul class="list-unstyled text-start my-4 d-flex flex-column gap-3 text-muted">
-                    <li><i class="bi bi-check-circle-fill text-success me-2"></i> Hiển thị tin 7 ngày</li>
-                    <li><i class="bi bi-check-circle-fill text-success me-2"></i> Tối đa 5 hình ảnh</li>
-                    <li><i class="bi bi-check-circle-fill text-success me-2"></i> Hỗ trợ tìm kiếm cơ bản</li>
+
+                <ul class="list-unstyled text-start d-flex flex-column gap-3 mb-4 ps-3">
+                    <li class="d-flex align-items-center gap-2">
+                        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                        <span>Hiển thị tin 7 ngày</span>
+                    </li>
+                    <li class="d-flex align-items-center gap-2">
+                        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                        <span>Tối đa 5 hình ảnh</span>
+                    </li>
+                    <li class="d-flex align-items-center gap-2">
+                        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                        <span>Hỗ trợ tìm kiếm cơ bản</span>
+                    </li>
                 </ul>
-                <button class="btn btn-outline-purple rounded-pill w-100 mt-auto py-2">Đăng Tin Ngay</button>
+
+                <a asp-controller="RoomManager" asp-action="Create" class="btn btn-outline-teal rounded-pill py-2 fw-semibold w-100">
+                    Đăng Tin Ngay
+                </a>
             </div>
         </div>
 
-        <!-- Gói VIP Nổi Bật -->
-        <div class="col-lg-4 col-md-6">
-            <div class="card h-100 border-2 shadow rounded-4 p-4 text-center position-relative" style="border-color: var(--main-purple) !important;">
-                <span class="badge badge-gold position-absolute top-0 start-50 translate-middle px-3 py-2 text-uppercase">Phổ Biến Nhất</span>
-                <h4 class="fw-bold text-dark mt-2">Tin VIP Nổi Bật</h4>
-                <div class="my-3">
-                    <span class="display-6 fw-bold" style="color: var(--main-purple);">49.000đ</span>
+        <!-- GÓI TIN VIP NỔI BẬT -->
+        <div class="col-lg-5 col-md-6 position-relative">
+            <div class="card border-2 shadow-lg rounded-4 p-4 text-center position-relative" style="border-color: #7c3aed;">
+                <!-- Badge Phổ biến nhất -->
+                <div class="position-absolute top-0 start-50 translate-middle">
+                    <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold text-uppercase shadow-sm">
+                        PHỔ BIẾN NHẤT
+                    </span>
+                </div>
+
+                <h3 class="fw-bold text-dark mb-3 mt-2">Tin VIP Nổi Bật</h3>
+                <div class="mb-4">
+                    <span class="fs-1 fw-bold" style="color: #7c3aed;">49.000đ</span>
                     <span class="text-muted">/ 7 ngày</span>
                 </div>
-                <ul class="list-unstyled text-start my-4 d-flex flex-column gap-3 text-muted">
-                    <li><i class="bi bi-check-circle-fill text-success me-2"></i> Hiển thị trang nhất tìm kiếm</li>
-                    <li><i class="bi bi-check-circle-fill text-success me-2"></i> Badge Tím nổi bật thu hút người xem</li>
-                    <li><i class="bi bi-check-circle-fill text-success me-2"></i> Tối đa 15 hình ảnh sắc nét</li>
-                    <li><i class="bi bi-check-circle-fill text-success me-2"></i> Ưu tiên hỗ trợ kỹ thuật</li>
+
+                <ul class="list-unstyled text-start d-flex flex-column gap-3 mb-4 ps-3">
+                    <li class="d-flex align-items-center gap-2">
+                        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                        <span>Hiển thị trang nhất tìm kiếm</span>
+                    </li>
+                    <li class="d-flex align-items-center gap-2">
+                        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                        <span>Badge Tím nổi bật thu hút người xem</span>
+                    </li>
+                    <li class="d-flex align-items-center gap-2">
+                        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                        <!-- 💥 ĐÃ SỬA DÒNG NÀY THEO YÊU CẦU -->
+                        <span>Được đăng 2 bài viết</span>
+                    </li>
+                    <li class="d-flex align-items-center gap-2">
+                        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                        <span>Ưu tiên hỗ trợ kỹ thuật</span>
+                    </li>
                 </ul>
-                <button class="btn btn-purple rounded-pill w-100 mt-auto py-2">Chọn Gói VIP</button>
+
+                <a asp-controller="RoomManager" asp-action="Create" class="btn btn-teal rounded-pill py-2 fw-semibold text-white w-100" style="background-color: #7c3aed;">
+                    Chọn Gói VIP
+                </a>
             </div>
         </div>
     </div>

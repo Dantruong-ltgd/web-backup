@@ -11,5 +11,6 @@ namespace web_backup.Models
         public string? AvatarUrl { get; set; }
         public bool IsVip { get; set; } = false;
         public DateTime? VipExpiryDate { get; set; }
+
     }
 }

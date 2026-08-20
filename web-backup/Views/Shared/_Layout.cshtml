@@ -108,12 +108,17 @@
                                 </a>
                             </li>
 
-                            <!-- 2. Quản lý phòng (Dành cho Admin và Chủ trọ) -->
+                            <!-- 2. Quản lý phòng & Phân tích doanh thu (Dành cho Admin và Chủ trọ) -->
                             @if (User.IsInRole("Admin") || User.IsInRole("ChuTro"))
                             {
                                 <li>
                                     <a class="dropdown-item px-3 py-2" asp-controller="RoomManager" asp-action="Index">
                                         <i class="bi bi-house-gear me-2 text-teal"></i>Quản lý phòng
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item px-3 py-2" asp-controller="Payment" asp-action="RevenueAnalysis">
+                                        <i class="bi bi-graph-up-arrow me-2 text-success"></i>Phân tích doanh thu
                                     </a>
                                 </li>
                             }

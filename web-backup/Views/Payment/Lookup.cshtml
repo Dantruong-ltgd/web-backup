@@ -1,0 +1,32 @@
+﻿@{
+    ViewData["Title"] = "Tra cứu mã thanh toán";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-lg rounded-4 p-4">
+                <h4 class="fw-bold text-center mb-3"><i class="bi bi-search text-primary me-2"></i>TRA CỨU HÓA ĐƠN</h4>
+                <p class="text-muted text-center small mb-4">Nhập mã hóa đơn thanh toán (ví dụ: HD20260820...) để xem lại thông tin chi tiết.</p>
+
+                @if (ViewBag.Message != null)
+                {
+                    <div class="alert alert-danger rounded-3 text-center mb-3">@ViewBag.Message</div>
+                }
+
+                <form method="get" asp-action="Lookup">
+                    <div class="input-group mb-3">
+                        <input type="text" name="code" class="form-control form-control-lg rounded-start-pill ps-4" placeholder="Nhập mã thanh toán..." required />
+                        <button type="submit" class="btn btn-primary rounded-end-pill px-4">Tìm kiếm</button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-3">
+                    <a href="/Payment/MyBookings" class="text-decoration-none text-secondary small">
+                        <i class="bi bi-clock-history me-1"></i> Hoặc xem toàn bộ lịch sử thanh toán của bạn
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -21,5 +21,7 @@ namespace web_backup.Models
         public decimal TotalAmount { get; set; }
 
         public string Note { get; set; } = string.Empty;
+
+        public string Status { get; set; } = "CHỜ XÁC NHẬN";
     }
 }

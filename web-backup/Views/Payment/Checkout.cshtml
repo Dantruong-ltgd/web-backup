@@ -9,13 +9,24 @@
         transactionType = "Deposit";
     }
 
-    decimal rentalDeposit = Model.Price * 0.20m; // Cọc 20% giá thuê
-    decimal buyoutDeposit = (Model.SalePrice ?? 0) * 0.05m; // Cọc 5% giá bán đứt
+    // Tính toán số tiền cọc (Ép kiểu sang long để truyền vào JS và API VietQR)
+    long rentalPrice = (long)Model.Price;
+    long salePrice = (long)(Model.SalePrice ?? 0);
+    long rentalDeposit = (long)(Model.Price * 0.20m); // Cọc 20% giá thuê
+    long buyoutDeposit = (long)((Model.SalePrice ?? 0) * 0.05m); // Cọc 5% giá bán đứt
+
+    long currentAmount = (transactionType == "Buyout") ? buyoutDeposit : rentalDeposit;
+
+    // Cấu hình Ngân hàng nhận tiền VietQR
+    string bankId = "VCB";               // Mã ngân hàng (VCB, MB, TCB, ACB, BIDV...)
+    string accountNo = "9332860710";     // Số tài khoản ngân hàng
+    string accountName = "NGO DAN TRUONG"; // Tên chủ tài khoản
+    string bookingMemo = $"DATCOC ROOM{Model.Id}"; // Nội dung chuyển khoản
 }
 
 <div class="container my-5">
     <div class="row justify-content-center">
-        <div class="col-lg-7 col-md-9">
+        <div class="col-lg-8 col-md-10">
             <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
 
                 <!-- HEADER THÔNG TIN PHÒNG -->
@@ -32,19 +43,19 @@
                 </div>
 
                 <div class="card-body p-4">
-                    <form asp-controller="Payment" asp-action="ProcessPayment" method="post">
+                    <form id="paymentForm" asp-controller="Payment" asp-action="ProcessPayment" method="post">
                         <input type="hidden" name="RoomId" value="@Model.Id" />
 
                         <!-- THÔNG TIN NGƯỜI THANH TOÁN -->
                         <div class="mb-4">
                             <h6 class="fw-bold text-dark mb-3"><i class="bi bi-person-fill me-2"></i>Thông tin người thanh toán</h6>
                             <div class="p-3 bg-light rounded-3">
-                                <div class="mb-2"><strong>Họ tên:</strong> @User.Identity.Name</div>
+                                <div class="mb-2"><strong>Họ tên:</strong> @(User.Identity?.Name ?? "Khách hàng")</div>
                                 <div><strong>Số điện thoại:</strong> @(ViewBag.PhoneNumber ?? "0332860710")</div>
                             </div>
                         </div>
 
-                        <!-- LỰA CHỌN LOẠI GIAO DỊCH (THUÊ HOẶC MUA ĐỨT) -->
+                        <!-- LỰA CHỌN LOẠI GIAO DỊCH -->
                         <div class="mb-4">
                             <h6 class="fw-bold text-dark mb-3"><i class="bi bi-card-checklist me-2"></i>Chọn hình thức giao dịch</h6>
 
@@ -80,7 +91,7 @@
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <span class="text-muted">Giá niêm yết:</span>
                                 <span class="fw-bold" id="displayPrice">
-                                    @(transactionType == "Buyout" ? (Model.SalePrice?.ToString("N0") + " VNĐ") : (Model.Price.ToString("N0") + " VNĐ/tháng"))
+                                    @(transactionType == "Buyout" ? (salePrice.ToString("N0") + " VNĐ") : (rentalPrice.ToString("N0") + " VNĐ/tháng"))
                                 </span>
                             </div>
 
@@ -89,7 +100,7 @@
                             <div class="d-flex justify-content-between align-items-center pt-2">
                                 <span class="fw-bold fs-6">Số tiền cần thanh toán:</span>
                                 <span class="fw-bold fs-4 text-danger" id="displayAmount">
-                                    @(transactionType == "Buyout" ? buyoutDeposit.ToString("N0") : rentalDeposit.ToString("N0")) VNĐ
+                                    @currentAmount.ToString("N0") VNĐ
                                 </span>
                             </div>
                         </div>
@@ -99,26 +110,47 @@
                             <h6 class="fw-bold text-dark mb-3"><i class="bi bi-wallet2 me-2"></i>Chọn phương thức thanh toán</h6>
 
                             <div class="form-check p-3 border rounded-3 mb-2 d-flex align-items-center">
-                                <input class="form-check-input ms-0 me-3" type="radio" name="PaymentMethod" id="momo" value="MoMo" checked />
+                                <input class="form-check-input ms-0 me-3" type="radio" name="PaymentMethod" id="momo" value="MoMo" checked onchange="toggleQrBox()" />
                                 <label class="form-check-label d-flex align-items-center fw-semibold w-100 cursor-pointer" for="momo">
                                     <img src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png" width="28" height="28" class="me-2 rounded-2" alt="MoMo" />
-                                    Ví MoMo / Mã QR
+                                    Ví MoMo / Quét Mã QR Ngân Hàng (VietQR)
                                 </label>
                             </div>
 
                             <div class="form-check p-3 border rounded-3 d-flex align-items-center">
-                                <input class="form-check-input ms-0 me-3" type="radio" name="PaymentMethod" id="vnpay" value="VNPay" />
+                                <input class="form-check-input ms-0 me-3" type="radio" name="PaymentMethod" id="vnpay" value="VNPay" onchange="toggleQrBox()" />
                                 <label class="form-check-label d-flex align-items-center fw-semibold w-100 cursor-pointer" for="vnpay">
                                     <i class="bi bi-bank fs-4 text-primary me-2"></i>
-                                    Cổng thanh toán VNPay / Ngân hàng
+                                    Cổng thanh toán VNPay / Thẻ ATM
                                 </label>
+                            </div>
+                        </div>
+
+                        <!-- KHU VỰC QUÉT MÃ QR TRỰC TIẾP TRÊN TRANG CHECKOUT -->
+                        <div id="qrPaymentSection" class="border rounded-4 p-4 bg-light mb-4 text-center shadow-sm">
+                            <h6 class="fw-bold text-primary mb-2">
+                                <i class="bi bi-qr-code-scan me-2"></i>Mã QR Thanh Toán Chuyển Khoản Tự Động
+                            </h6>
+                            <p class="small text-muted mb-3">Mở App Ngân hàng hoặc MoMo quét mã để điền chính xác số tiền & nội dung</p>
+
+                            <div class="d-flex justify-content-center mb-3">
+                                <img id="vietQrImage"
+                                     src="https://img.vietqr.io/image/@(bankId)-@(accountNo)-compact2.png?amount=@currentAmount&addInfo=@bookingMemo&accountName=@Uri.EscapeDataString(accountName)"
+                                     alt="Mã QR VietQR" class="border p-2 bg-white rounded-3 shadow-sm img-fluid" style="max-width: 210px;" />
+                            </div>
+
+                            <div class="small bg-white p-3 rounded-3 border text-start d-inline-block w-100" style="max-width: 400px;">
+                                <div><strong>Ngân hàng:</strong> Vietcombank (@bankId)</div>
+                                <div><strong>Số tài khoản:</strong> <span class="text-primary fw-bold">@accountNo</span></div>
+                                <div><strong>Chủ tài khoản:</strong> @accountName</div>
+                                <div><strong>Nội dung CK:</strong> <span class="badge bg-primary font-monospace">@bookingMemo</span></div>
                             </div>
                         </div>
 
                         <!-- NÚT THAO TÁC -->
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn text-white py-3 rounded-pill fw-bold fs-6 shadow-sm" style="background-color: #7c3aed;">
-                                <i class="bi bi-shield-check me-2"></i>Xác nhận & Thanh toán
+                            <button type="submit" id="btnSubmit" class="btn text-white py-3 rounded-pill fw-bold fs-6 shadow-sm" style="background-color: #7c3aed;">
+                                <i class="bi bi-check-circle-fill me-2"></i>Tôi đã thanh toán / Xác nhận
                             </button>
                             <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary py-2 rounded-pill fw-semibold">Hủy bỏ</a>
                         </div>
@@ -131,26 +163,61 @@
 </div>
 
 <script>
-    // Xử lý chuyển đổi giá trị & tính số tiền cọc linh hoạt trên Client
+    const bankId = "@bankId";
+    const accountNo = "@accountNo";
+    const accountName = "@accountName";
+    const bookingMemo = "@bookingMemo";
+
+    // Ép kiểu chuỗi Razor sang Number để linter/Visual Studio không báo lỗi TS1109
+    const rentalPrice = Number("@rentalPrice");
+    const rentalDeposit = Number("@rentalDeposit");
+    const salePrice = Number("@salePrice");
+    const buyoutDeposit = Number("@buyoutDeposit");
+
+    // Cập nhật số tiền và tạo lại đường dẫn Mã QR động
     function updatePaymentAmount() {
         const isBuyout = document.getElementById('typeBuyout')?.checked;
         const displayLabel = document.getElementById('displayTransactionLabel');
         const displayPrice = document.getElementById('displayPrice');
         const displayAmount = document.getElementById('displayAmount');
+        const qrImage = document.getElementById('vietQrImage');
 
-        const rentalPrice = @Model.Price;
-        const rentalDeposit = @rentalDeposit;
-        const salePrice = @(Model.SalePrice ?? 0);
-        const buyoutDeposit = @buyoutDeposit;
+        let amountToPay = rentalDeposit;
 
         if (isBuyout) {
-            displayLabel.innerText = "Đặt cọc mua đứt (5%)";
-            displayPrice.innerText = salePrice.toLocaleString('vi-VN') + " VNĐ";
-            displayAmount.innerText = buyoutDeposit.toLocaleString('vi-VN') + " VNĐ";
+            amountToPay = buyoutDeposit;
+            if (displayLabel) displayLabel.innerText = "Đặt cọc mua đứt (5%)";
+            if (displayPrice) displayPrice.innerText = salePrice.toLocaleString('vi-VN') + " VNĐ";
+            if (displayAmount) displayAmount.innerText = buyoutDeposit.toLocaleString('vi-VN') + " VNĐ";
         } else {
-            displayLabel.innerText = "Đặt cọc giữ chỗ (20%)";
-            displayPrice.innerText = rentalPrice.toLocaleString('vi-VN') + " VNĐ/tháng";
-            displayAmount.innerText = rentalDeposit.toLocaleString('vi-VN') + " VNĐ";
+            amountToPay = rentalDeposit;
+            if (displayLabel) displayLabel.innerText = "Đặt cọc giữ chỗ (20%)";
+            if (displayPrice) displayPrice.innerText = rentalPrice.toLocaleString('vi-VN') + " VNĐ/tháng";
+            if (displayAmount) displayAmount.innerText = rentalDeposit.toLocaleString('vi-VN') + " VNĐ";
+        }
+
+        // Cập nhật ảnh QR Code VietQR mới với số tiền tương ứng
+        if (qrImage) {
+            qrImage.src = `https://img.vietqr.io/image/${bankId}-${accountNo}-compact2.png?amount=${amountToPay}&addInfo=${bookingMemo}&accountName=${encodeURIComponent(accountName)}`;
         }
     }
+
+    // Ẩn/Hiện khung QR theo phương thức thanh toán
+    function toggleQrBox() {
+        const momoRadio = document.getElementById('momo');
+        const isMomo = momoRadio ? momoRadio.checked : false;
+        const qrSection = document.getElementById('qrPaymentSection');
+        if (qrSection) {
+            qrSection.style.display = isMomo ? "block" : "none";
+        }
+    }
+
+    // Xử lý sự kiện Submit Form -> Đổi trạng thái nút thành "Đã xử lý"
+    document.getElementById('paymentForm')?.addEventListener('submit', function() {
+        const btn = document.getElementById('btnSubmit');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Đã xử lý! Đang gửi email xác nhận...`;
+        }
+    });
 </script>

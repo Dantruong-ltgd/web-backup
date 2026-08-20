@@ -114,6 +114,21 @@ namespace web_backup.Controllers
                 room.District = currentUser.District;
             }
 
+            // 💥 GÁN NGƯỜI TẠO VÀ TỰ ĐỘNG ĐƯA LÊN TIN VIP NẾU TÀI KHOẢN CÒN HẠN VIP
+            if (currentUser != null)
+            {
+                room.UserId = currentUser.Id; // Gán UserId cho phòng
+
+                if (currentUser.IsVip && currentUser.VipExpiryDate.HasValue && currentUser.VipExpiryDate.Value > DateTime.Now)
+                {
+                    room.IsFeatured = true; // Tự động bật Tin VIP / Nổi bật
+                }
+                else
+                {
+                    room.IsFeatured = false; // Bài đăng thường
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(room);

@@ -20,6 +20,9 @@ namespace web_backup.Models
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal Amount { get; set; }
+        public string CustomerName { get; set; } = string.Empty;
+        public string CustomerPhone { get; set; } = string.Empty;
+        public DateTime BookingDate { get; set; } = DateTime.Now;
 
         public string Status { get; set; } = "Paid";
         public string PaymentMethod { get; set; } = "Chuyển khoản Ngân hàng";

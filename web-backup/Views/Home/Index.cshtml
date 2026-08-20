@@ -9,6 +9,20 @@
     var featuredRooms = Model?.Where(r => r.IsFeatured && (r.User == null || !r.User.IsVip)).ToList() ?? new List<web_backup.Models.Room>();
 }
 
+<!-- THÔNG BÁO XÁC NHẬN THANH TOÁN THÀNH CÔNG -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="container mt-3">
+        <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-3 d-flex align-items-center" role="alert">
+            <i class="bi bi-check-circle-fill fs-4 me-2 text-success"></i>
+            <div>
+                <strong>Thành công!</strong> @TempData["SuccessMessage"]
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+}
+
 <!-- BANNER & KHU VỰC TÌM KIẾM -->
 <div class="hero-section text-white py-5 position-relative" style="background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat; min-height: 380px;">
     <div class="container py-4">
@@ -127,7 +141,6 @@
                                     @(room.Category?.Name ?? "Phòng trọ")
                                 </span>
 
-                                <!-- ICON TRÁI TIM YÊU THÍCH TRÒN -->
                                 <button type="button" class="btn btn-favorite position-absolute top-0 end-0 m-3 shadow-sm" title="Yêu thích">
                                     <i class="bi bi-heart-fill"></i>
                                 </button>
@@ -213,7 +226,6 @@
                                     @(room.Category?.Name ?? "Phòng trọ")
                                 </span>
 
-                                <!-- ICON TRÁI TIM YÊU THÍCH TRÒN -->
                                 <button type="button" class="btn btn-favorite position-absolute top-0 end-0 m-3 shadow-sm" title="Yêu thích">
                                     <i class="bi bi-heart-fill"></i>
                                 </button>
@@ -285,7 +297,6 @@
             border-color: #6d28d9 !important;
         }
 
-    /* Nút Yêu thích hình tròn */
     .btn-favorite {
         width: 38px;
         height: 38px;

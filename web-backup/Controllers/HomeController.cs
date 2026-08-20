@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using web_backup.Models;
 using web_backup.Data;
+using Microsoft.AspNetCore.Authorization; // 👈 Thêm namespace để sử dụng Authorize
 
 namespace web_backup.Controllers
 {
@@ -160,6 +161,8 @@ namespace web_backup.Controllers
             return View();
         }
 
+        // 💥 GIỚI HẠN QUYỀN: Chỉ tài khoản Admin và Chủ trọ mới được truy cập Bảng giá
+        [Authorize(Roles = "Admin,ChuTro")]
         public IActionResult Pricing()
         {
             ViewData["Title"] = "Bảng Giá Dịch Vụ";

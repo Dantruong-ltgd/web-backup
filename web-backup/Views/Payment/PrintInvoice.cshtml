@@ -1,6 +1,6 @@
 ﻿@model web_backup.Models.Invoice
 @{
-    Layout = null; // Trang in không dùng Layout chung
+    Layout = null;
 }
 
 <!DOCTYPE html>
@@ -44,7 +44,9 @@
 <body>
     <div class="container">
         <div class="text-center my-3 no-print">
-            <button onclick="window.print()" class="btn btn-primary rounded-pill px-4 me-2"><i class="bi bi-printer-fill me-2"></i>In Hóa Đơn (PDF)</button>
+            <button onclick="window.print()" class="btn btn-primary rounded-pill px-4 me-2">
+                <i class="bi bi-printer-fill me-2"></i>In Hóa Đơn (PDF)
+            </button>
             <a href="/" class="btn btn-outline-secondary rounded-pill px-4">Trở về Trang chủ</a>
         </div>
 
