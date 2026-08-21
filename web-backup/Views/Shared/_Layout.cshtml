@@ -20,8 +20,8 @@
 
     <style>
             :root {
-                --primary-teal: #0d7a75;
-                --hover-teal: #095955;
+                --primary-teal: #7c3aed;
+                --hover-teal: #6d28d9;
             }
 
             .bg-teal {
@@ -38,20 +38,20 @@
                 border: none;
             }
 
-            .btn-teal:hover {
-                background-color: var(--hover-teal);
-                color: #ffffff;
-            }
+                .btn-teal:hover {
+                    background-color: var(--hover-teal);
+                    color: #ffffff;
+                }
 
             .btn-outline-teal {
                 border: 1px solid var(--primary-teal);
                 color: var(--primary-teal);
             }
 
-            .btn-outline-teal:hover {
-                background-color: var(--primary-teal);
-                color: #ffffff;
-            }
+                .btn-outline-teal:hover {
+                    background-color: var(--primary-teal);
+                    color: #ffffff;
+                }
 
             .nav-link-custom {
                 color: #333333;
@@ -59,9 +59,9 @@
                 transition: color 0.2s ease;
             }
 
-            .nav-link-custom:hover {
-                color: var(--primary-teal);
-            }
+                .nav-link-custom:hover {
+                    color: var(--primary-teal);
+                }
     </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -75,8 +75,6 @@
             </a>
 
             <!-- Menu trên màn hình lớn -->
-            <!-- Menu trên màn hình lớn -->
-            <!-- Menu trên màn hình lớn -->
             <nav class="d-none d-md-flex gap-4 fw-semibold">
                 <a href="/" class="text-decoration-none nav-link-custom text-teal">Trang chủ</a>
                 <a href="/Home/BoardingHouse" class="text-decoration-none nav-link-custom text-dark">Phòng trọ</a>
@@ -85,29 +83,42 @@
                 <a href="/Home/SharedRoom" class="text-decoration-none nav-link-custom text-dark">Ở ghép</a>
             </nav>
 
-            <!-- Nút Đăng nhập -->
+            <!-- Nút Đăng nhập / Tài khoản -->
             <div class="d-flex align-items-center gap-2">
                 @if (SignInManager.IsSignedIn(User))
                 {
                     var currentUser = await UserManager.GetUserAsync(User);
                     <div class="dropdown">
-                        <button class="btn btn-outline-teal dropdown-toggle rounded-pill px-3" type="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle me-1"></i> Chào, <strong>@(currentUser?.FullName ?? User.Identity?.Name)</strong>
+                        <button class="btn btn-outline-teal dropdown-toggle rounded-pill px-3 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
+                            @if (currentUser != null && !string.IsNullOrEmpty(currentUser.AvatarUrl))
+                            {
+                                <img src="@currentUser.AvatarUrl" alt="Avatar" class="rounded-circle object-fit-cover border" style="width: 26px; height: 26px;" />
+                            }
+                            else
+                            {
+                                <i class="bi bi-person-circle fs-6"></i>
+                            }
+                            <span>Chào, <strong>@(currentUser?.FullName ?? User.Identity?.Name)</strong></span>
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3">
-                            <!-- 1. Dòng Thông tin cá nhân mới thêm -->
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-1">
+                            <!-- 1. Dòng Thông tin cá nhân -->
                             <li>
                                 <a class="dropdown-item px-3 py-2" asp-controller="Account" asp-action="Profile">
                                     <i class="bi bi-person-badge me-2 text-primary"></i>Thông tin cá nhân
                                 </a>
                             </li>
 
-                            <!-- 2. Quản lý phòng (Dành cho Admin và Chủ trọ) -->
+                            <!-- 2. Quản lý phòng & Phân tích doanh thu (Dành cho Admin và Chủ trọ) -->
                             @if (User.IsInRole("Admin") || User.IsInRole("ChuTro"))
                             {
                                 <li>
                                     <a class="dropdown-item px-3 py-2" asp-controller="RoomManager" asp-action="Index">
                                         <i class="bi bi-house-gear me-2 text-teal"></i>Quản lý phòng
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item px-3 py-2" asp-controller="Payment" asp-action="RevenueAnalysis">
+                                        <i class="bi bi-graph-up-arrow me-2 text-success"></i>Phân tích doanh thu
                                     </a>
                                 </li>
                             }
@@ -143,45 +154,55 @@
         @RenderBody()
     </main>
 
-    <!-- FOOTER -->
-    <footer class="bg-teal text-white mt-auto pt-4 pb-3">
+    <footer class="footer-purple pt-5 pb-3 mt-auto">
         <div class="container">
-            <div class="row gy-4">
-                <div class="col-12 col-md-3">
-                    <h5 class="fw-bold mb-3">Về Chúng Tôi</h5>
-                    <p class="small text-white-50">
+            <div class="row g-4">
+
+                <!-- CỘT 1: VỀ CHÚNG TÔI -->
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="mb-3">Về Chúng Tôi</h5>
+                    <p>
                         Kênh thông tin tìm kiếm phòng trọ, chung cư mini, nhà nguyên căn uy tín hàng đầu tại TP. Hồ Chí Minh.
                     </p>
                 </div>
-                <div class="col-6 col-md-3">
-                    <h5 class="fw-bold mb-3">Hỗ Trợ Khách Hàng</h5>
-                    <ul class="list-unstyled small text-white-50 lh-lg">
-                        <li><a href="#" class="text-white-50 text-decoration-none">Trung tâm trợ giúp</a></li>
-                        <li><a href="#" class="text-white-50 text-decoration-none">Quy định đăng tin</a></li>
-                        <li><a href="#" class="text-white-50 text-decoration-none">Bảng giá dịch vụ</a></li>
+
+                <!-- CỘT 2: HỖ TRỢ KHÁCH HÀNG -->
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="mb-3">Hỗ Trợ Khách Hàng</h5>
+                    <ul class="list-unstyled d-flex flex-column gap-2 mb-0">
+                        <li><a class="footer-link" asp-controller="Home" asp-action="HelpCenter">Trung tâm trợ giúp</a></li>
+                        <li><a class="footer-link" asp-controller="Home" asp-action="PostingRules">Quy định đăng tin</a></li>
+                        <li><a class="footer-link" asp-controller="Home" asp-action="Pricing">Bảng giá dịch vụ</a></li>
                     </ul>
                 </div>
-                <div class="col-6 col-md-3">
-                    <h5 class="fw-bold mb-3">Điều Khoản</h5>
-                    <ul class="list-unstyled small text-white-50 lh-lg">
-                        <li><a href="#" class="text-white-50 text-decoration-none">Chính sách bảo mật</a></li>
-                        <li><a href="#" class="text-white-50 text-decoration-none">Giải quyết tranh chấp</a></li>
-                        <li><a href="#" class="text-white-50 text-decoration-none">Điều khoản sử dụng</a></li>
+
+                <!-- CỘT 3: ĐIỀU KHOẢN -->
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="mb-3">Điều Khoản</h5>
+                    <ul class="list-unstyled d-flex flex-column gap-2 mb-0">
+                        <li><a class="footer-link" asp-controller="Home" asp-action="Privacy">Chính sách bảo mật</a></li>
+                        <li><a class="footer-link" asp-controller="Home" asp-action="DisputeResolution">Giải quyết tranh chấp</a></li>
+                        <li><a class="footer-link" asp-controller="Home" asp-action="TermsOfService">Điều khoản sử dụng</a></li>
                     </ul>
                 </div>
-                <div class="col-12 col-md-3">
-                    <h5 class="fw-bold mb-3">Đối Tác & Mạng Xã Hội</h5>
-                    <div class="d-flex gap-3 fs-4 mb-2">
-                        <a href="#" class="text-white"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="text-white"><i class="bi bi-twitter-x"></i></a>
-                        <a href="#" class="text-white"><i class="bi bi-instagram"></i></a>
-                        <a href="#" class="text-white"><i class="bi bi-youtube"></i></a>
+
+                <!-- CỘT 4: MẠNG XÃ HỘI -->
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="mb-3">Đối Tác & Mạng Xã Hội</h5>
+                    <div class="d-flex gap-2">
+                        <a href="https://www.facebook.com/share/19Pwk3gd3J/?mibextid=wwXIfr" target="_blank" class="social-icon" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="https://x.com" target="_blank" class="social-icon" aria-label="X"><i class="bi bi-twitter-x"></i></a>
+                        <a href="https://www.instagram.com/baptruong2530/" target="_blank" class="social-icon" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="https://www.youtube.com/" target="_blank" class="social-icon" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
                     </div>
                 </div>
+
             </div>
-            <hr class="my-3 border-light opacity-25" />
-            <div class="text-center small text-white-50">
-                &copy; @DateTime.Now.Year - PT-SG. Tất cả quyền được bảo lưu.
+
+            <hr class="my-4 border-white opacity-25" />
+
+            <div class="text-center small opacity-75">
+                &copy; 2026 - PT-SG. Tất cả quyền được bảo lưu.
             </div>
         </div>
     </footer>

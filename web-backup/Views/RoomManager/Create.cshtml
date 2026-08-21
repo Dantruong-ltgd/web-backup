@@ -51,8 +51,8 @@
                             {
                                 <select asp-for="District" class="form-select rounded-3" required>
                                     <option value="">-- Chọn Quận / Huyện --</option>
-                                    <!-- Các Quận nội thành -->
                                     <option value="Quận 1">Quận 1</option>
+                                    <option value="Quận 2">Quận 2</option>
                                     <option value="Quận 3">Quận 3</option>
                                     <option value="Quận 4">Quận 4</option>
                                     <option value="Quận 5">Quận 5</option>
@@ -62,8 +62,6 @@
                                     <option value="Quận 10">Quận 10</option>
                                     <option value="Quận 11">Quận 11</option>
                                     <option value="Quận 12">Quận 12</option>
-
-                                    <!-- Các Quận tên riêng -->
                                     <option value="Bình Thạnh">Bình Thạnh</option>
                                     <option value="Gò Vấp">Gò Vấp</option>
                                     <option value="Phú Nhuận">Phú Nhuận</option>
@@ -71,8 +69,6 @@
                                     <option value="Tân Phú">Tân Phú</option>
                                     <option value="Bình Tân">Bình Tân</option>
                                     <option value="TP. Thủ Đức">TP. Thủ Đức</option>
-
-                                    <!-- Các Huyện ngoại thành -->
                                     <option value="Bình Chánh">Huyện Bình Chánh</option>
                                     <option value="Hóc Môn">Huyện Hóc Môn</option>
                                     <option value="Nhà Bè">Huyện Nhà Bè</option>
@@ -82,9 +78,29 @@
                             }
                             <span asp-validation-for="District" class="text-danger small"></span>
                         </div>
+
+                        <!-- LOẠI HÌNH PHÒNG -->
                         <div class="col-md-6 mb-3">
                             <label asp-for="CategoryId" class="form-label fw-semibold">Loại hình phòng</label>
-                            <select asp-for="CategoryId" class="form-select rounded-3" asp-items="ViewBag.CategoryId" required></select>
+                            <select asp-for="CategoryId" id="categorySelect" class="form-select rounded-3" asp-items="ViewBag.CategoryId" onchange="toggleBuyoutOption()" required>
+                                <option value="">-- Chọn loại hình phòng --</option>
+                            </select>
+                            <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- MỤC MUA ĐỨT (CHỈ HIỂN THỊ DÀNH CHO CHUNG CƯ & NHÀ NGUYÊN CĂN) -->
+                    <div id="buyoutSection" class="mb-3 p-3 bg-light rounded-3 border border-danger border-opacity-25" style="display: none;">
+                        <div class="form-check mb-2">
+                            <input asp-for="IsForSale" class="form-check-input" type="checkbox" id="isForSaleCheck" onchange="toggleSalePriceInput()" />
+                            <label class="form-check-label fw-bold text-danger" for="isForSaleCheck">
+                                <i class="bi bi-tag-fill me-1"></i> Cho phép bán đứt (Mua đứt bất động sản)
+                            </label>
+                        </div>
+                        <div id="salePriceContainer" style="display: none;">
+                            <label asp-for="SalePrice" class="form-label fw-semibold">Giá bán đứt (VNĐ)</label>
+                            <input asp-for="SalePrice" type="number" class="form-control rounded-3" placeholder="Ví dụ: 2500000000" />
+                            <span asp-validation-for="SalePrice" class="text-danger small"></span>
                         </div>
                     </div>
 
@@ -123,4 +139,30 @@
             preview.src = url;
         }
     }
+
+    // Tự động ẩn/hiện tùy chọn Mua Đứt theo Loại hình phòng
+    function toggleBuyoutOption() {
+        const categorySelect = document.getElementById('categorySelect');
+        const buyoutSection = document.getElementById('buyoutSection');
+        const selectedText = categorySelect.options[categorySelect.selectedIndex]?.text || '';
+
+        if (selectedText.includes('Chung cư') || selectedText.includes('Nhà nguyên căn')) {
+            buyoutSection.style.display = 'block';
+        } else {
+            buyoutSection.style.display = 'none';
+            document.getElementById('isForSaleCheck').checked = false;
+            toggleSalePriceInput();
+        }
+    }
+
+    function toggleSalePriceInput() {
+        const isForSale = document.getElementById('isForSaleCheck').checked;
+        const salePriceContainer = document.getElementById('salePriceContainer');
+        salePriceContainer.style.display = isForSale ? 'block' : 'none';
+    }
+
+    // Chạy kiểm tra ban đầu khi load trang
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleBuyoutOption();
+    });
 </script>

@@ -14,5 +14,7 @@ namespace web_backup.ViewModels
 
         [Display(Name = "Quận quản lý (Dành cho Chủ trọ)")]
         public string? District { get; set; }
+        public string? AvatarUrl { get; set; }
+        public IFormFile? AvatarFile { get; set; }
     }
 }

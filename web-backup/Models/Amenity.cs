@@ -3,8 +3,16 @@
     public class Amenity
     {
         public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string IconClass { get; set; } = string.Empty; // Class Icon Bootstrap/FontAwesome
+        public string FullName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string PhoneNumber { get; set; } = string.Empty;
+        public string Role { get; set; } = "User";
+
+        // 📌 THÊM DÒNG NÀY ĐỂ LƯU ĐƯỜNG DẪN ẢNH ĐẠI DIỆN
+        public string? AvatarUrl
+        {
+            get; set;
+        }
         public ICollection<Room>? Rooms { get; set; }
     }
 }

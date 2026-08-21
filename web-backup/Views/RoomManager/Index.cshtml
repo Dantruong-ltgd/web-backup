@@ -27,13 +27,15 @@
                         <th>Giá thuê</th>
                         <th>Diện tích</th>
                         <th>Loại phòng</th>
+                        <th>Trạng thái</th>
                         <th class="text-center">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model)
                     {
-                        <tr>
+                        <!-- Gắn id vào dòng tr để phục vụ xóa tức thì bằng AJAX -->
+                        <tr id="room-row-@item.Id">
                             <td>
                                 <img src="@item.ImageUrl" class="rounded-3 shadow-sm" style="width: 80px; height: 60px; object-fit: cover;" alt="@item.Title" />
                             </td>
@@ -44,10 +46,28 @@
                             <td class="text-success fw-bold">@item.Price.ToString("N0") VNĐ</td>
                             <td>@item.Area m²</td>
                             <td>@(item.Category?.Name ?? "N/A")</td>
+
+                            <!-- CỘT TRẠNG THÁI -->
+                            <td>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input cursor-pointer" type="checkbox" id="status_@item.Id"
+                                    @(item.IsRented ? "checked" : "") onchange="toggleRoomStatus(@item.Id, this)" />
+                                    <label class="form-check-label small fw-bold @(item.IsRented ? "text-danger" : "text-success")" for="status_@item.Id" id="label_@item.Id">
+                                        @(item.IsRented ? "Đã thuê/Mua" : "Còn trống")
+                                    </label>
+                                </div>
+                            </td>
+
+                            <!-- THAO TÁC: SỬA & XÓA -->
                             <td class="text-center">
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary rounded-pill px-3">
-                                    <i class="bi bi-pencil-square me-1"></i> Sửa
-                                </a>
+                                <div class="btn-group" role="group">
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary rounded-pill px-3 me-1">
+                                        <i class="bi bi-pencil-square me-1"></i> Sửa
+                                    </a>
+                                    <button onclick="deleteRoom(@item.Id)" class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                                        <i class="bi bi-trash me-1"></i> Xóa
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     }
@@ -56,3 +76,62 @@
         </div>
     </div>
 </div>
+
+<script>
+    // 1. Hàm Bật/Tắt trạng thái phòng
+    async function toggleRoomStatus(roomId, checkbox) {
+        const label = document.getElementById(`label_${roomId}`);
+        const originalState = !checkbox.checked;
+
+        try {
+            const response = await fetch(`/RoomManager/ToggleStatus/${roomId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (response.ok) {
+                if (checkbox.checked) {
+                    label.textContent = "Đã thuê/Mua";
+                    label.className = "form-check-label small fw-bold text-danger";
+                } else {
+                    label.textContent = "Còn trống";
+                    label.className = "form-check-label small fw-bold text-success";
+                }
+            } else {
+                alert("Không thể cập nhật trạng thái!");
+                checkbox.checked = originalState;
+            }
+        } catch (error) {
+            alert("Lỗi kết nối máy chủ!");
+            checkbox.checked = originalState;
+        }
+    }
+
+    // 2. Hàm Xóa phòng
+    async function deleteRoom(roomId) {
+        if (!confirm("Bạn có chắc chắn muốn xóa phòng này không? Hành động này không thể hoàn tác.")) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/RoomManager/Delete/${roomId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (response.ok) {
+                // Xóa dòng tương ứng trên bảng HTML
+                const row = document.getElementById(`room-row-${roomId}`);
+                if (row) {
+                    row.remove();
+                }
+                alert("Xóa phòng thành công!");
+            } else {
+                const resData = await response.json().catch(() => null);
+                alert(resData?.message || "Không thể xóa phòng này!");
+            }
+        } catch (error) {
+            alert("Lỗi kết nối máy chủ!");
+        }
+    }
+</script>

@@ -9,8 +9,34 @@
             <div class="card border-0 shadow-sm rounded-4 p-4">
                 <h4 class="fw-bold text-center text-teal mb-4"><i class="bi bi-pencil-square me-2"></i>CẬP NHẬT THÔNG TIN CÁ NHÂN</h4>
 
-                <form asp-action="EditProfile" method="post">
+                <!-- LƯU Ý: Đã thêm enctype="multipart/form-data" để gửi file ảnh -->
+                <form asp-action="EditProfile" method="post" enctype="multipart/form-data">
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <!-- ================= CỤM THAY ĐỔI ẢNH ĐẠI DIỆN ================= -->
+                    <div class="text-center mb-4">
+                        <div class="position-relative d-inline-block">
+                            <!-- Ảnh xem trước -->
+                            <img id="avatarPreview"
+                                 src="@(string.IsNullOrEmpty(Model.AvatarUrl) ? "/images/default-avatar.png" : Model.AvatarUrl)"
+                                 alt="Avatar Preview"
+                                 class="rounded-circle object-fit-cover border shadow-sm"
+                                 style="width: 110px; height: 110px;" />
+
+                            <!-- Nút icon máy ảnh đè lên góc ảnh -->
+                            <label for="AvatarFile"
+                                   class="btn btn-sm text-white rounded-circle position-absolute bottom-0 end-0 p-2 shadow-sm"
+                                   style="background-color: #0d7a75; cursor: pointer;"
+                                   title="Đổi ảnh đại diện">
+                                <i class="bi bi-camera-fill fs-6"></i>
+                            </label>
+
+                            <!-- Input chọn file (Ẩn) -->
+                            <input type="file" id="AvatarFile" name="AvatarFile" accept="image/*" class="d-none" onchange="previewImage(event)" />
+                        </div>
+                        <div class="form-text small text-muted mt-2">Nhấp vào biểu tượng máy ảnh để tải ảnh mới</div>
+                    </div>
+                    <!-- ============================================================= -->
 
                     <div class="mb-3">
                         <label asp-for="FullName" class="form-label fw-semibold">Họ và Tên</label>
@@ -49,3 +75,19 @@
         </div>
     </div>
 </div>
+
+<!-- JS Xem trước ảnh ngay lập tức khi người dùng chọn file -->
+@section Scripts {
+    <script>
+        function previewImage(event) {
+            const input = event.target;
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('avatarPreview').src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}

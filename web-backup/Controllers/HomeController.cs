@@ -2,6 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using web_backup.Models;
 using web_backup.Data;
+using Microsoft.AspNetCore.Authorization; // 👈 Thêm namespace để sử dụng Authorize
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace web_backup.Controllers
 {
@@ -14,23 +18,47 @@ namespace web_backup.Controllers
             _context = context;
         }
 
-        // 1. TRANG CHỦ: Chỉ hiển thị các căn nổi bật (gồm tất cả các loại phòng)
+        // 1. TRANG CHỦ: Hiển thị phòng nổi bật (thả tim) VÀ phòng từ Chủ trọ VIP
         public async Task<IActionResult> Index()
         {
-            // Lấy danh sách Loại phòng nạp vào Dropdown tìm kiếm
             ViewBag.Categories = await _context.Categories.ToListAsync();
 
-            // Lấy tất cả phòng (hoặc lọc theo tiêu chí nổi bật như phòng mới nhất/chính chủ)
-            var featuredRooms = await _context.Rooms
+            // Lấy danh sách phòng nổi bật thông thường (thả tim và chưa thuê)
+            var favoritedRooms = await _context.Rooms
                 .Include(r => r.Category)
-                .OrderByDescending(r => r.Id) // Bạn có thể thêm .Where(r => r.IsFeatured) nếu có thuộc tính IsFeatured
-                .Take(6) // Lấy 6 căn nổi bật nhất
+                .Where(r => r.IsFeatured && !r.IsRented)
+                .OrderByDescending(r => r.Id)
                 .ToListAsync();
 
-            return View(featuredRooms);
+            // 💥 BỔ SUNG: Lấy danh sách phòng thuộc về các Chủ trọ VIP (còn hạn) và chưa thuê
+            var vipRooms = await _context.Rooms
+                .Include(r => r.User)
+                .Include(r => r.Category)
+                .Where(r => !r.IsRented && r.User != null && r.User.IsVip && r.User.VipExpiryDate > DateTime.Now)
+                .OrderByDescending(r => r.Id)
+                .ToListAsync();
+
+            ViewBag.VipRooms = vipRooms;
+
+            return View(favoritedRooms);
         }
 
-        // 2. TRANG PHÒNG TRỌ
+        // 📌 BỔ SUNG: XỬ LÝ THẢ TIM YÊU THÍCH (TỰ ĐỘNG ĐƯA LÊN DÒNG PHÒNG NỔI BẬT TRANG CHỦ)
+        [HttpPost]
+        public async Task<IActionResult> ToggleFavorite(int id)
+        {
+            var room = await _context.Rooms.FindAsync(id);
+            if (room == null)
+                return Json(new { success = false, message = "Không tìm thấy thông tin phòng!" });
+
+            // Đảo trạng thái Yêu thích / Nổi bật
+            room.IsFeatured = !room.IsFeatured;
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true, isFeatured = room.IsFeatured });
+        }
+
+        // 2. TRANG PHÒNG TRỌ: Chỉ hiện các phòng CHƯA THUÊ/MUA
         public async Task<IActionResult> BoardingHouse()
         {
             ViewData["Title"] = "Phòng Trọ";
@@ -38,13 +66,13 @@ namespace web_backup.Controllers
 
             var rooms = await _context.Rooms
                 .Include(r => r.Category)
-                .Where(r => r.Category != null && (r.Category.Name.Contains("Phòng trọ") || r.Category.Name.Contains("Trọ")))
+                .Where(r => !r.IsRented && r.Category != null && (r.Category.Name.Contains("Phòng trọ") || r.Category.Name.Contains("Trọ")))
                 .ToListAsync();
 
             return View("CategoryRooms", rooms);
         }
 
-        // 3. TRANG CHUNG CƯ
+        // 3. TRANG CHUNG CƯ: Chỉ hiện các phòng CHƯA THUÊ/MUA
         public async Task<IActionResult> Apartment()
         {
             ViewData["Title"] = "Chung Cư";
@@ -52,13 +80,13 @@ namespace web_backup.Controllers
 
             var rooms = await _context.Rooms
                 .Include(r => r.Category)
-                .Where(r => r.Category != null && (r.Category.Name.Contains("Chung cư") || r.Category.Name.Contains("Căn hộ")))
+                .Where(r => !r.IsRented && r.Category != null && (r.Category.Name.Contains("Chung cư") || r.Category.Name.Contains("Căn hộ")))
                 .ToListAsync();
 
             return View("CategoryRooms", rooms);
         }
 
-        // 4. TRANG NHÀ NGUYÊN CĂN
+        // 4. TRANG NHÀ NGUYÊN CĂN: Chỉ hiện các phòng CHƯA THUÊ/MUA
         public async Task<IActionResult> House()
         {
             ViewData["Title"] = "Nhà Nguyên Căn";
@@ -66,13 +94,13 @@ namespace web_backup.Controllers
 
             var rooms = await _context.Rooms
                 .Include(r => r.Category)
-                .Where(r => r.Category != null && (r.Category.Name.Contains("Nhà nguyên căn") || r.Category.Name.Contains("Nguyên căn")))
+                .Where(r => !r.IsRented && r.Category != null && (r.Category.Name.Contains("Nhà nguyên căn") || r.Category.Name.Contains("Nguyên căn")))
                 .ToListAsync();
 
             return View("CategoryRooms", rooms);
         }
 
-        // 5. TRANG Ở GHÉP
+        // 5. TRANG Ở GHÉP: Chỉ hiện các phòng CHƯA THUÊ/MUA
         public async Task<IActionResult> SharedRoom()
         {
             ViewData["Title"] = "Ở Ghép";
@@ -80,18 +108,21 @@ namespace web_backup.Controllers
 
             var rooms = await _context.Rooms
                 .Include(r => r.Category)
-                .Where(r => r.Category != null && (r.Category.Name.Contains("Ở ghép") || r.Category.Name.Contains("Ghép")))
+                .Where(r => !r.IsRented && r.Category != null && (r.Category.Name.Contains("Ở ghép") || r.Category.Name.Contains("Ghép")))
                 .ToListAsync();
 
             return View("CategoryRooms", rooms);
         }
 
-        // 6. XỬ LÝ TÌM KIẾM
+        // 6. XỬ LÝ TÌM KIẾM: Loại bỏ phòng ĐÃ THUÊ/MUA khỏi kết quả tìm kiếm
         public async Task<IActionResult> Search(string? keyword, int? categoryId, string? maxPrice)
         {
             ViewBag.Categories = await _context.Categories.ToListAsync();
 
-            var query = _context.Rooms.Include(r => r.Category).AsQueryable();
+            var query = _context.Rooms
+                .Include(r => r.Category)
+                .Where(r => !r.IsRented)
+                .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(keyword))
             {
@@ -115,18 +146,59 @@ namespace web_backup.Controllers
             var results = await query.ToListAsync();
             return View("Index", results);
         }
-        // GET: /Home/Details/5
+
+        // GET: /Home/Details/5 (Không cho truy cập trang chi tiết phòng đã thuê/mua)
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
 
             var room = await _context.Rooms
                 .Include(r => r.Category)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == id && !m.IsRented);
 
             if (room == null) return NotFound();
 
             return View(room);
+        }
+
+        // --- CÁC TRANG HỖ TRỢ KHÁCH HÀNG ---
+        public IActionResult HelpCenter()
+        {
+            ViewData["Title"] = "Trung Tâm Trợ Giúp";
+            return View();
+        }
+
+        public IActionResult PostingRules()
+        {
+            ViewData["Title"] = "Quy Định Đăng Tin";
+            return View();
+        }
+
+        // 💥 GIỚI HẠN QUYỀN: Chỉ tài khoản Admin và Chủ trọ mới được truy cập Bảng giá
+        [Authorize(Roles = "Admin,ChuTro")]
+        public IActionResult Pricing()
+        {
+            ViewData["Title"] = "Bảng Giá Dịch Vụ";
+            return View();
+        }
+
+        // --- CÁC TRANG ĐIỀU KHOẢN ---
+        public IActionResult Privacy()
+        {
+            ViewData["Title"] = "Chính Sách Bảo Mật";
+            return View();
+        }
+
+        public IActionResult DisputeResolution()
+        {
+            ViewData["Title"] = "Giải Quyết Tranh Chấp";
+            return View();
+        }
+
+        public IActionResult TermsOfService()
+        {
+            ViewData["Title"] = "Điều Khoản Sử Dụng";
+            return View();
         }
     }
 }
