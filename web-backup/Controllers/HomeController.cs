@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using web_backup.Models;
 using web_backup.Data;
 using Microsoft.AspNetCore.Authorization; // 👈 Thêm namespace để sử dụng Authorize
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace web_backup.Controllers
 {
@@ -15,16 +18,27 @@ namespace web_backup.Controllers
             _context = context;
         }
 
-        // 1. TRANG CHỦ: Chỉ hiển thị các phòng ĐÃ ĐƯỢC THẢ TIM (IsFeatured = true) VÀ CHƯA ĐƯỢC THUÊ/MUA (!IsRented)
+        // 1. TRANG CHỦ: Hiển thị phòng nổi bật (thả tim) VÀ phòng từ Chủ trọ VIP
         public async Task<IActionResult> Index()
         {
             ViewBag.Categories = await _context.Categories.ToListAsync();
 
+            // Lấy danh sách phòng nổi bật thông thường (thả tim và chưa thuê)
             var favoritedRooms = await _context.Rooms
                 .Include(r => r.Category)
-                .Where(r => r.IsFeatured && !r.IsRented) // 👈 Lọc ẩn các phòng đã thuê/mua
+                .Where(r => r.IsFeatured && !r.IsRented)
                 .OrderByDescending(r => r.Id)
                 .ToListAsync();
+
+            // 💥 BỔ SUNG: Lấy danh sách phòng thuộc về các Chủ trọ VIP (còn hạn) và chưa thuê
+            var vipRooms = await _context.Rooms
+                .Include(r => r.User)
+                .Include(r => r.Category)
+                .Where(r => !r.IsRented && r.User != null && r.User.IsVip && r.User.VipExpiryDate > DateTime.Now)
+                .OrderByDescending(r => r.Id)
+                .ToListAsync();
+
+            ViewBag.VipRooms = vipRooms;
 
             return View(favoritedRooms);
         }
@@ -52,7 +66,7 @@ namespace web_backup.Controllers
 
             var rooms = await _context.Rooms
                 .Include(r => r.Category)
-                .Where(r => !r.IsRented && r.Category != null && (r.Category.Name.Contains("Phòng trọ") || r.Category.Name.Contains("Trọ"))) // 👈 Lọc !r.IsRented
+                .Where(r => !r.IsRented && r.Category != null && (r.Category.Name.Contains("Phòng trọ") || r.Category.Name.Contains("Trọ")))
                 .ToListAsync();
 
             return View("CategoryRooms", rooms);
@@ -66,7 +80,7 @@ namespace web_backup.Controllers
 
             var rooms = await _context.Rooms
                 .Include(r => r.Category)
-                .Where(r => !r.IsRented && r.Category != null && (r.Category.Name.Contains("Chung cư") || r.Category.Name.Contains("Căn hộ"))) // 👈 Lọc !r.IsRented
+                .Where(r => !r.IsRented && r.Category != null && (r.Category.Name.Contains("Chung cư") || r.Category.Name.Contains("Căn hộ")))
                 .ToListAsync();
 
             return View("CategoryRooms", rooms);
@@ -80,7 +94,7 @@ namespace web_backup.Controllers
 
             var rooms = await _context.Rooms
                 .Include(r => r.Category)
-                .Where(r => !r.IsRented && r.Category != null && (r.Category.Name.Contains("Nhà nguyên căn") || r.Category.Name.Contains("Nguyên căn"))) // 👈 Lọc !r.IsRented
+                .Where(r => !r.IsRented && r.Category != null && (r.Category.Name.Contains("Nhà nguyên căn") || r.Category.Name.Contains("Nguyên căn")))
                 .ToListAsync();
 
             return View("CategoryRooms", rooms);
@@ -94,7 +108,7 @@ namespace web_backup.Controllers
 
             var rooms = await _context.Rooms
                 .Include(r => r.Category)
-                .Where(r => !r.IsRented && r.Category != null && (r.Category.Name.Contains("Ở ghép") || r.Category.Name.Contains("Ghép"))) // 👈 Lọc !r.IsRented
+                .Where(r => !r.IsRented && r.Category != null && (r.Category.Name.Contains("Ở ghép") || r.Category.Name.Contains("Ghép")))
                 .ToListAsync();
 
             return View("CategoryRooms", rooms);
@@ -105,10 +119,9 @@ namespace web_backup.Controllers
         {
             ViewBag.Categories = await _context.Categories.ToListAsync();
 
-            // Mặc định chỉ lọc các phòng CHƯA THUÊ/MUA
             var query = _context.Rooms
                 .Include(r => r.Category)
-                .Where(r => !r.IsRented) // 👈 Lọc !r.IsRented
+                .Where(r => !r.IsRented)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(keyword))
@@ -141,7 +154,7 @@ namespace web_backup.Controllers
 
             var room = await _context.Rooms
                 .Include(r => r.Category)
-                .FirstOrDefaultAsync(m => m.Id == id && !m.IsRented); // 👈 Lọc !m.IsRented
+                .FirstOrDefaultAsync(m => m.Id == id && !m.IsRented);
 
             if (room == null) return NotFound();
 

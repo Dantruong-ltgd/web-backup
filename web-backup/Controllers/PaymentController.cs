@@ -101,7 +101,7 @@ namespace web_backup.Controllers
             return View("PendingConfirmation", invoice);
         }
 
-        // 💥 2.5. XỬ LÝ ĐĂNG KÝ MUA GÓI VIP (49.000đ / 7 NGÀY) QUA QR CODE
+        // 💥 2.5. XỬ LÝ ĐĂNG KÝ MUA GÓI VIP (49.000đ / 7 NGÀY) - CHUYỂN QUA TRANG CHỜ THANH TOÁN
         [HttpPost]
         [Authorize(Roles = "Admin,ChuTro")]
         public async Task<IActionResult> ProcessVipPayment()
@@ -140,17 +140,8 @@ namespace web_backup.Controllers
                 ViewBag.EmailError = "Lỗi gửi mail: " + ex.Message;
             }
 
-            // Tạo VietQR tự động
-            string bankId = "MB";
-            string accountNo = "0332860710";
-            string accountName = "TRUONG VAN BAP";
-            string description = $"THANH TOAN VIP {invoiceCode}";
-
-            ViewBag.QrUrl = $"https://img.vietqr.io/image/{bankId}-{accountNo}-compact2.png?amount={vipPrice}&addInfo={Uri.EscapeDataString(description)}&accountName={Uri.EscapeDataString(accountName)}";
-            ViewBag.InvoiceCode = invoiceCode;
-            ViewBag.Amount = vipPrice;
-
-            return View("VipQrPayment");
+            // Trả về View chờ thanh toán giống đặt cọc phòng
+            return View("PendingVipConfirmation", invoice);
         }
 
         // 3. XÁC NHẬN CỌC/MUA PHÒNG QUA LINK TRONG EMAIL
@@ -297,8 +288,9 @@ namespace web_backup.Controllers
             }
         }
 
-        // 6. XEM BẢNG PHÂN TÍCH DOANH THU
+        // 6. XEM BẢNG PHÂN TÍCH DOANH THU (CHỈ DÀNH CHO ADMIN)
         [HttpGet]
+        [Authorize(Roles = "Admin")] // 👈 Thêm dòng này để chặn Chủ trọ và tài khoản thường
         public async Task<IActionResult> RevenueAnalysis(int? year)
         {
             int targetYear = year ?? DateTime.Now.Year;

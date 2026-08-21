@@ -9,7 +9,8 @@ namespace web_backup.Models
 
         public string InvoiceCode { get; set; } = string.Empty; // Ví dụ: HD20260819001
 
-        public int BookingId { get; set; }
+        public int? BookingId { get; set; }
+
         public Booking? Booking { get; set; }
 
         public DateTime CreatedDate { get; set; } = DateTime.Now;

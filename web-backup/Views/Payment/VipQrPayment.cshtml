@@ -16,8 +16,9 @@
             <p class="mb-0">Số tiền: <strong class="text-danger">@ViewBag.Amount.ToString("N0") VNĐ</strong></p>
         </div>
 
-        <div class="alert alert-info small mb-3">
-            <i class="bi bi-info-circle me-1"></i> Sau khi chuyển khoản thành công, hệ thống sẽ xác nhận và tự động kích hoạt **7 ngày VIP** cho tài khoản của bạn.
+        <div class="alert alert-info small mb-3" id="alertBox">
+            <div id="loadingStatus" class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+            <span id="statusText">Đang chờ Admin xác nhận thanh toán qua email...</span>
         </div>
 
         <a asp-controller="Home" asp-action="Index" class="btn btn-secondary rounded-pill w-100">
@@ -25,3 +26,31 @@
         </a>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        // Tự động gọi API kiểm tra trạng thái thanh toán mỗi 3 giây
+        const invoiceCode = '@ViewBag.InvoiceCode';
+
+        const checkInterval = setInterval(function() {
+            fetch(`/Payment/CheckStatus?invoiceCode=${invoiceCode}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.isPaid) {
+                        clearInterval(checkInterval);
+
+                        // Thay đổi giao diện thông báo thành công
+                        document.getElementById('alertBox').className = "alert alert-success small mb-3 fw-bold";
+                        document.getElementById('statusText').innerHTML = "✓ Thanh toán thành công! Đã kích hoạt 7 ngày VIP.";
+                        document.getElementById('loadingStatus').style.display = 'none';
+
+                        // Tự động chuyển hướng về trang quản lý sau 2 giây
+                        setTimeout(function() {
+                            window.location.href = '/RoomManager/Index';
+                        }, 2000);
+                    }
+                })
+                .catch(error => console.error('Lỗi kiểm tra trạng thái:', error));
+        }, 3000);
+    </script>
+}

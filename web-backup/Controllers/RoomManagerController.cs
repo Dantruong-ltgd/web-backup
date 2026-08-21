@@ -162,31 +162,27 @@ namespace web_backup.Controllers
             return Ok(new { success = true, isRented = room.IsRented });
         }
 
-        // 7. Xử lý xóa phòng qua AJAX (POST)
-        [HttpPost]
-        public async Task<IActionResult> Delete(int id)
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var room = await _context.Rooms.FindAsync(id);
             if (room == null) return NotFound();
 
-            var currentUser = await _userManager.GetUserAsync(User);
+            // 1. Tìm và xóa các Booking liên quan đến phòng này
+            var bookings = await _context.Bookings.Where(b => b.RoomId == id).ToListAsync();
+            foreach (var booking in bookings)
+            {
+                // Xóa luôn Invoice liên quan đến booking này (nếu có)
+                var invoices = await _context.Invoices.Where(i => i.BookingId == booking.Id).ToListAsync();
+                _context.Invoices.RemoveRange(invoices);
+            }
+            _context.Bookings.RemoveRange(bookings);
 
-            // Kiểm tra phân quyền theo Quận nếu là Chủ trọ
-            if (User.IsInRole("ChuTro") && !string.Equals(room.District, currentUser?.District, StringComparison.OrdinalIgnoreCase))
-            {
-                return Forbid();
-            }
+            // 2. Sau đó mới tiến hành xóa phòng
+            _context.Rooms.Remove(room);
+            await _context.SaveChangesAsync();
 
-            try
-            {
-                _context.Rooms.Remove(room);
-                await _context.SaveChangesAsync();
-                return Ok(new { success = true });
-            }
-            catch (Exception)
-            {
-                return BadRequest(new { success = false, message = "Không thể xóa phòng này vì đã có dữ liệu đặt phòng/hóa đơn liên quan!" });
-            }
+            return RedirectToAction(nameof(Index));
         }
     }
 }
