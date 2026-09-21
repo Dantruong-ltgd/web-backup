@@ -1,0 +1,45 @@
+﻿@model web_backup.Models.ApplicationUser
+@{
+    ViewData["Title"] = "Thông tin cá nhân";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4">
+                <div class="text-center mb-4">
+                    <div class="bg-teal text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 70px; height: 70px; font-size: 2rem; background-color: #0d7a75;">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                    <h4 class="fw-bold mb-0">@Model.FullName</h4>
+                    <span class="badge bg-light text-teal border mt-1">@ViewBag.RoleName</span>
+                </div>
+
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item d-flex justify-content-between py-3">
+                        <span class="text-muted"><i class="bi bi-envelope me-2"></i>Email:</span>
+                        <strong class="text-dark">@Model.Email</strong>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between py-3">
+                        <span class="text-muted"><i class="bi bi-telephone me-2"></i>Số điện thoại:</span>
+                        <strong class="text-dark">@(string.IsNullOrEmpty(Model.PhoneNumber) ? "Chưa cập nhật" : Model.PhoneNumber)</strong>
+                    </div>
+                    @if (Model.District != null)
+                    {
+                        <div class="list-group-item d-flex justify-content-between py-3">
+                            <span class="text-muted"><i class="bi bi-geo-alt me-2"></i>Quận/Huyện quản lý:</span>
+                            <strong class="text-teal">@Model.District</strong>
+                        </div>
+                    }
+                </div>
+
+                <div class="mt-4 text-center d-flex justify-content-center gap-2">
+                    <a asp-action="EditProfile" class="btn btn-teal text-white rounded-pill px-4 fw-bold" style="background-color: #0d7a75;">
+                        <i class="bi bi-pencil-square me-1"></i> Cập nhật thông tin
+                    </a>
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">Quay lại Trang chủ</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,82 @@
+﻿@model web_backup.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Đăng Ký";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 rounded-4 p-4">
+                <h3 class="fw-bold text-center mb-3 text-teal">ĐĂNG KÝ TÀI KHOẢN</h3>
+
+                <form asp-action="Register" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="FullName" class="form-label fw-semibold">Họ và Tên</label>
+                        <input asp-for="FullName" class="form-control rounded-3" placeholder="Nguyễn Văn A" />
+                        <span asp-validation-for="FullName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label fw-semibold">Email</label>
+                        <input asp-for="Email" class="form-control rounded-3" placeholder="nhapemail@domain.com" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Password" class="form-label fw-semibold">Mật khẩu</label>
+                            <input asp-for="Password" class="form-control rounded-3" placeholder="••••••••" />
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ConfirmPassword" class="form-label fw-semibold">Nhập lại mật khẩu</label>
+                            <input asp-for="ConfirmPassword" class="form-control rounded-3" placeholder="••••••••" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Role" class="form-label fw-semibold">Bạn muốn đăng ký làm:</label>
+                        <select asp-for="Role" class="form-select rounded-3" id="roleSelect" onchange="toggleDistrictInput()">
+                            <option value="NguoiXem">Khách tìm phòng (Người xem)</option>
+                            <option value="ChuTro">Chủ trọ cho thuê phòng</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3 d-none" id="districtGroup">
+                        <label asp-for="District" class="form-label fw-semibold">Quận/Huyện bạn quản lý</label>
+                        <select asp-for="District" class="form-select rounded-3">
+                            <option value="">-- Chọn Quận --</option>
+                            <option value="Quận 1">Quận 1</option>
+                            <option value="Bình Thạnh">Bình Thạnh</option>
+                            <option value="Quận 10">Quận 10</option>
+                            <option value="Gò Vấp">Gò Vấp</option>
+                            <option value="Thủ Đức">Thủ Đức</option>
+                        </select>
+                        <span asp-validation-for="District" class="text-danger small"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-teal w-100 py-2 rounded-3 text-white fw-bold mb-3" style="background-color: #0d9488;">Đăng Ký</button>
+
+                    <div class="text-center small">
+                        Đã có tài khoản? <a asp-action="Login" class="text-teal text-decoration-none fw-bold">Đăng nhập</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleDistrictInput() {
+        var role = document.getElementById("roleSelect").value;
+        var districtGroup = document.getElementById("districtGroup");
+        if (role === "ChuTro") {
+            districtGroup.classList.remove("d-none");
+        } else {
+            districtGroup.classList.add("d-none");
+        }
+    }
+</script>

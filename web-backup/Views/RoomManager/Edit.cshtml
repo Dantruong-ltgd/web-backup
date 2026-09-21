@@ -1,0 +1,92 @@
+﻿@model web_backup.Models.Room
+@{
+    ViewData["Title"] = "Chỉnh sửa phòng";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm rounded-4 p-4">
+                <h4 class="fw-bold mb-4 text-teal"><i class="bi bi-pencil-square me-2"></i>CHỈNH SỬA THÔNG TIN PHÒNG</h4>
+
+                <form asp-action="Edit" method="post">
+                    <input type="hidden" asp-for="Id" />
+
+                    <!-- Khung Xem trước & Chỉnh sửa đường dẫn ảnh -->
+                    <div class="mb-4 text-center bg-light p-3 rounded-3 border">
+                        <label class="form-label fw-bold d-block text-start mb-2">Hình ảnh hiện tại</label>
+                        <img id="imagePreview" src="@Model.ImageUrl" class="rounded-3 shadow-sm mb-3" style="max-height: 200px; width: 100%; object-fit: cover;" alt="Preview" />
+
+                        <label asp-for="ImageUrl" class="form-label fw-semibold d-block text-start">Đường dẫn URL hình ảnh mới:</label>
+                        <input asp-for="ImageUrl" class="form-control rounded-3" id="imageUrlInput" oninput="updatePreviewImage()" placeholder="https://images.unsplash.com/..." />
+                        <span asp-validation-for="ImageUrl" class="text-danger small d-block text-start"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label fw-semibold">Tiêu đề bài đăng</label>
+                        <input asp-for="Title" class="form-control rounded-3" />
+                        <span asp-validation-for="Title" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Price" class="form-label fw-semibold">Giá thuê (VNĐ/tháng)</label>
+                            <input asp-for="Price" class="form-control rounded-3" />
+                            <span asp-validation-for="Price" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Area" class="form-label fw-semibold">Diện tích (m²)</label>
+                            <input asp-for="Area" class="form-control rounded-3" />
+                            <span asp-validation-for="Area" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="District" class="form-label fw-semibold">Quận / Huyện</label>
+                            <input asp-for="District" class="form-control rounded-3" />
+                            <span asp-validation-for="District" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="CategoryId" class="form-label fw-semibold">Loại hình</label>
+                            <select asp-for="CategoryId" class="form-select rounded-3" asp-items="ViewBag.CategoryId"></select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Address" class="form-label fw-semibold">Địa chỉ chi tiết</label>
+                        <input asp-for="Address" class="form-control rounded-3" />
+                        <span asp-validation-for="Address" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4 d-flex gap-4">
+                        <div class="form-check">
+                            <input asp-for="IsOwner" class="form-check-input" />
+                            <label asp-for="IsOwner" class="form-check-label fw-semibold">Chính chủ</label>
+                        </div>
+                        <div class="form-check">
+                            <input asp-for="HasMezzanine" class="form-check-input" />
+                            <label asp-for="HasMezzanine" class="form-check-label fw-semibold">Có gác lửng</label>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">Hủy bỏ</a>
+                        <button type="submit" class="btn btn-teal text-white rounded-pill px-4 fw-bold" style="background-color: #0d7a75;">Lưu thay đổi</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Hàm xem trước ảnh khi thay đổi URL
+    function updatePreviewImage() {
+        const url = document.getElementById('imageUrlInput').value;
+        const preview = document.getElementById('imagePreview');
+        if (url) {
+            preview.src = url;
+        }
+    }
+</script>
