@@ -1,16 +1,17 @@
 ---
-name: User Story / Task Template
-about: Tạo task mới theo chuẩn Agile cho dự án
-title: '[US] '
+name: Agile User Story Template
+about: Mẫu chuẩn tạo task công việc Agile/Scrum cho dự án Final Assignment
+title: '[QUANLY-] '
 labels: 'enhancement'
 assignees: ''
 ---
 
-**As a** [nhận định vai trò, ví dụ: Lễ tân / Quản trị viên]
-**I want to** [mô tả tính năng muốn thực hiện]
-**So that** [lợi ích hoặc mục đích mang lại]
+**As a** [Xác định vai trò người dùng, ví dụ: Nhân viên lễ tân / Quản trị viên / Quản lý]
+**I want to** [Mô tả chi tiết tính năng hoặc nghiệp vụ cần thực hiện]
+**So that** [Lợi ích, mục đích mang lại cho hệ thống quản lý thuê phòng]
 
-### Definition of Done (DoD):
-- [ ] Đã hoàn thành mã nguồn tính năng.
-- [ ] Đã kiểm thử (test) không phát sinh lỗi cục bộ.
-- [ ] Đã tạo Pull Request và được review code thành công.
+### Definition of Done (DoD - Tiêu chuẩn hoàn thành):
+- [ ] Đã hoàn thành mã nguồn lập trình tính năng theo đúng yêu cầu nghiệp vụ.
+- [ ] Đã tự kiểm thử (local testing) không phát sinh lỗi ngoại lệ.
+- [ ] Đã tạo Pull Request trên nhánh phát triển và được thành viên trong nhóm review code.
+- [ ] Đã đồng bộ mã nguồn và tài liệu liên quan lên kho lưu trữ GitHub (nhánh `update`).
