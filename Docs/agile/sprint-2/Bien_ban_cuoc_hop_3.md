@@ -6,6 +6,7 @@
 ### Dự án: Hệ Thống Quản Lý Thuê Phòng
 
 </div>
+
 ---
 
 ### MEETING MINUTES
