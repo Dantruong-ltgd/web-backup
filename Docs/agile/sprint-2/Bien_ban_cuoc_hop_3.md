@@ -1,8 +1,11 @@
+<div align="center">
+
 # BIÊN BẢN HỌP NHÓM
 
 ## SPRINT 2 PLANNING
 ### Dự án: Hệ Thống Quản Lý Thuê Phòng
 
+</div>
 ---
 
 ### MEETING MINUTES
