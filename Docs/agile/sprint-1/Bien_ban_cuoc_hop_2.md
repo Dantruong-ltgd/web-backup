@@ -5,7 +5,7 @@
 ## SPRINT 1 REVIEW & RETROSPECTIVE
 ### Dự án: Hệ Thống Quản Lý Thuê Phòng
 
-<div>
+</div>
 
 ---
 
