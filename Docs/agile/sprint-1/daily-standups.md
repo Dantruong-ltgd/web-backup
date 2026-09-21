@@ -1,29 +1,14 @@
-# Daily Standups - Sprint 1
+# Daily Standups - Sprint (31/08/2026 - 14/09/2026)[cite: 8]
 
-## Ngày: 03/09/2026
-- **Ngô Dân Trường:**
-  - Hôm qua: Khởi tạo repository và cấu trúc thư mục dự án trên GitHub.
-  - Hôm nay: Bắt đầu triển khai task `US-01` (Xem danh sách và lọc phòng).
-  - Khó khăn: Không có.
-- **Phạm Duy Tâm:**
-  - Hôm qua: Phân tích các trường dữ liệu cho chức năng quản lý phòng.
-  - Hôm nay: Bắt đầu viết code form thêm, sửa, xóa thông tin phòng (`US-02`).
-  - Khó khăn: Chưa có.
-- **Lê Quốc Cường:**
-  - Hôm qua: Tìm hiểu thiết kế cơ sở dữ liệu bảng khách hàng.
-  - Hôm nay: Xây dựng module lưu trữ thông tin khách hàng (`US-03`).
-  - Khó khăn: Cần đồng bộ hóa định dạng dữ liệu với Phạm Duy Tâm.
+## Ngày: 01/09/2026
+- **Ngô Dân Trường:** Khởi tạo repository, cấu trúc thư mục dự án và bắt đầu triển khai `QUANLY-4` (Xem danh sách phòng).
+- **Phạm Duy Tâm:** Phân tích biểu mẫu dữ liệu và bắt đầu code chức năng `QUANLY-5` (Thêm/sửa phòng).
+- **Lê Quốc Cường:** Thiết kế cơ sở dữ liệu và triển khai `QUANLY-6` (Lưu trữ thông tin khách hàng).
 
-## Ngày: 06/09/2026
-- **Ngô Dân Trường:**
-  - Hôm qua: Hoàn thành bộ lọc trạng thái phòng (Trống, Đang thuê, Đang dọn).
-  - Hôm nay: Kiểm thử tính năng lọc và chuẩn bị tạo Pull Request.
-  - Khó khăn: Gặp xung đột nhánh nhỏ trên Git nhưng đã tự xử lý xong.
-- **Phạm Duy Tâm:**
-  - Hôm qua: Hoàn thiện chức năng thêm/sửa phòng (`US-02`).
-  - Hôm nay: Xử lý phần xóa phòng và tối ưu hóa giao diện.
-  - Khó khăn: Cần thêm xác nhận trước khi xóa.
-- **Lê Quốc Cường:**
-  - Hôm qua: Viết API kết nối lưu trữ CCCD và số điện thoại khách hàng (`US-03`).
-  - Hôm nay: Kiểm tra tính hợp lệ (validate) dữ liệu đầu vào của khách hàng.
-  - Khó khăn: Đang hoàn thiện nốt phần validate.
+## Ngày: 07/09/2026
+- **Ngô Dân Trường:** Hoàn thành bộ lọc trạng thái phòng và phối hợp kiểm thử với Phạm Duy Tâm.
+- **Phạm Duy Tâm:** Hoàn thiện form quản lý phòng, bắt đầu triển khai hỗ trợ phần báo cáo thống kê (`QUANLY-9`).
+- **Lê Quốc Cường:** Hoàn thành `QUANLY-6` và bắt đầu triển khai `QUANLY-7` (Đặt phòng / Check-in) theo đúng timeline.
+
+## Ngày: 12/09/2026
+- **Toàn nhóm (Ngô Dân Trường, Phạm Duy Tâm, Lê Quốc Cường):** Triển khai hoàn thiện cụm `QUANLY-3` (Tính tiền & Thống kê báo cáo - `QUANLY-8`, `QUANLY-9`). Tiến hành fix các lỗi phát sinh trên môi trường local.
