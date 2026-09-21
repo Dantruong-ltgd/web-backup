@@ -1,0 +1,22 @@
+# BIÊN BẢN HỌP NHÓM - SPRINT 1 PLANNING
+### Dự án: Hệ Thống Quản Lý Thuê Phòng
+
+## MEETING MINUTES
+* **Location:** Phòng học thư viện[cite: 6]
+* **Date:** 31/08/2026[cite: 4, 6]
+* **Attendees:** Ngô Dân Trường, Phạm Duy Tâm, Lê Quốc Cường
+* **Next meeting date:** 03/09/2026 (Mid-sprint Check-in)
+
+## Agenda and Notes
+* Lập kế hoạch và khởi động Sprint 1, tập trung vào Epic `QUANLY-1` (Quản lý phòng) và khởi tạo nền tảng dự án.
+* Phân tích rủi ro: Cấu trúc thư mục Git và việc đồng bộ các nhánh (`main`, `update`) cần được chuẩn hóa ngay từ đầu để tránh xung đột mã nguồn.
+* Đưa các User Story về quản lý phòng và thông tin khách hàng vào Sprint Backlog.
+* Chốt giải pháp kỹ thuật: Khởi tạo repository, thiết lập phân chia thư mục chuẩn Agile (`docs/`, `.github/`) và phân công nhiệm vụ cụ thể.
+
+## Action Points from the Meeting:
+
+| Action Items | Person(s) Responsible | Deadline | Status |
+| :--- | :--- | :--- | :--- |
+| Khởi tạo repository, đồng bộ thư mục chuẩn trên nhánh `update` và làm module `QUANLY-4` (Xem/lọc danh sách phòng) | Ngô Dân Trường | 07/09/2026 | In progress |
+| Phân tích dữ liệu và lập trình form Thêm/Sửa/Xóa phòng (`QUANLY-5`) | Phạm Duy Tâm | 07/09/2026 | In progress |
+| Thiết kế cơ sở dữ liệu sơ bộ và chuẩn bị module lưu trữ thông tin khách hàng (`QUANLY-6`) | Lê Quốc Cường | 07/09/2026 | In progress |
