@@ -1,10 +1,8 @@
-# Sprint 1 Planning - Hệ Thống Quản Lý Thuê Phòng
+# Sprint Planning - Hệ Thống Quản Lý Thuê Phòng
 
-- **Sprint Goal:** Hoàn thành phần cốt lõi bao gồm cấu trúc hệ thống, quản lý danh mục phòng và lưu trữ thông tin khách hàng.
-- **Thời gian thực hiện:** Tuần 1 - Tuần 2
-- **Tổng Story Points cam kết:** 11 Points
-
-## Danh sách Task trong Sprint Backlog:
-1. **US-01**: Xem danh sách và lọc phòng (3 pts) - Phụ trách: Ngô Dân Trường
-2. **US-02**: Thêm/Sửa/Xóa thông tin phòng (5 pts) - Phụ trách: Phạm Duy Tâm
-3. **US-03**: Lưu trữ thông tin khách hàng (3 pts) - Phụ trách: Lê Quốc Cường
+- **Sprint Goal (Mục tiêu Sprint):** Hoàn thành toàn bộ các mốc cốt lõi bao gồm Quản lý phòng, Quản lý khách hàng - đặt phòng, Tính tiền và Thống kê báo cáo.
+- **Thời gian thực hiện:** Từ ngày **31/08/2026** đến ngày **14/09/2026**[cite: 8].
+- **Phân công nhiệm vụ chi tiết:**
+  1. **QUANLY-1 (Quản lý phòng - QUANLY-4, QUANLY-5):** Phụ trách bởi **Phạm Duy Tâm** và **Ngô Dân Trường** (Timeline: 31/08 - 14/09)[cite: 8].
+  2. **QUANLY-2 (Quản lý khách hàng & Đặt phòng - QUANLY-6, QUANLY-7):** Phụ trách bởi **Lê Quốc Cường** (Timeline: 31/08 - 14/09)[cite: 8].
+  3. **QUANLY-3 (Tính tiền & Thống kê báo cáo - QUANLY-8, QUANLY-9):** Phụ trách phối hợp toàn nhóm (Timeline: 31/08 - 14/09)[cite: 8].
