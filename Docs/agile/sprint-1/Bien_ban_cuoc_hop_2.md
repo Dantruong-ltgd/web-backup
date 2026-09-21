@@ -1,7 +1,9 @@
+<div align="center">
 # BIÊN BẢN HỌP NHÓM
 
 ## SPRINT 1 REVIEW & RETROSPECTIVE
 ### Dự án: Hệ Thống Quản Lý Thuê Phòng
+<div>
 
 ---
 
