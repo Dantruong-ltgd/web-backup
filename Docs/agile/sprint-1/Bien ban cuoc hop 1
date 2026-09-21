@@ -1,19 +1,29 @@
-# BIÊN BẢN HỌP NHÓM - SPRINT 1 PLANNING
+# BIÊN BẢN HỌP NHÓM
+
+## SPRINT 1 PLANNING
 ### Dự án: Hệ Thống Quản Lý Thuê Phòng
 
-## MEETING MINUTES
+---
+
+### MEETING MINUTES
+
 * **Location:** Phòng học thư viện[cite: 6]
 * **Date:** 31/08/2026[cite: 4, 6]
 * **Attendees:** Ngô Dân Trường, Phạm Duy Tâm, Lê Quốc Cường
-* **Next meeting date:** 03/09/2026 (Mid-sprint Check-in)
+* **Next meeting date:** 03/09/2026[cite: 4, 6]
 
-## Agenda and Notes
-* Lập kế hoạch và khởi động Sprint 1, tập trung vào Epic `QUANLY-1` (Quản lý phòng) và khởi tạo nền tảng dự án.
-* Phân tích rủi ro: Cấu trúc thư mục Git và việc đồng bộ các nhánh (`main`, `update`) cần được chuẩn hóa ngay từ đầu để tránh xung đột mã nguồn.
-* Đưa các User Story về quản lý phòng và thông tin khách hàng vào Sprint Backlog.
-* Chốt giải pháp kỹ thuật: Khởi tạo repository, thiết lập phân chia thư mục chuẩn Agile (`docs/`, `.github/`) và phân công nhiệm vụ cụ thể.
+---
 
-## Action Points from the Meeting:
+### Agenda and Notes
+
+* Lập kế hoạch và khởi động Sprint 1, tập trung vào Epic `QUANLY-1` (Quản lý phòng) và khởi tạo nền tảng dự án[cite: 4].
+* Phân tích rủi ro: Cấu trúc thư mục Git và việc đồng bộ các nhánh (`main`, `update`) cần được chuẩn hóa ngay từ đầu để tránh xung đột mã nguồn[cite: 4].
+* Đưa các User Story về quản lý phòng và thông tin khách hàng vào Sprint Backlog[cite: 4].
+* Chốt giải pháp kỹ thuật: Khởi tạo repository, thiết lập phân chia thư mục chuẩn Agile và phân công nhiệm vụ cụ thể cho từng thành viên[cite: 4].
+
+---
+
+### Action Points from the Meeting:
 
 | Action Items | Person(s) Responsible | Deadline | Status |
 | :--- | :--- | :--- | :--- |
