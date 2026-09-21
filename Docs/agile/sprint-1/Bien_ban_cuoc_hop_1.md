@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 # BIÊN BẢN HỌP NHÓM
-=======
-# BIÊN BẢN HỌP NHÓM<span style="font-size: 18px;">BIÊN BẢN HỌP NHÓM</span>
->>>>>>> 92b8a821d15568696b97ad30108cdedc6910bd47
 
 ## SPRINT 1 PLANNING
 ### Dự án: Hệ Thống Quản Lý Thuê Phòng
@@ -11,17 +7,10 @@
 
 ### MEETING MINUTES
 
-<<<<<<< HEAD
 * **Location:** Phòng học thư viện
 * **Date:** 31/08/2026[cite: 4]
 * **Attendees:** Ngô Dân Trường, Phạm Duy Tâm, Lê Quốc Cường
 * **Next meeting date:** 03/09/2026[cite: 4]
-=======
-* **Location:** Phòng học thư viện[cite: 6]
-* **Date:** 31/08/2026[cite: 4, 6]
-* **Attendees:** Ngô Dân Trường, Phạm Duy Tâm, Lê Quốc Cường
-* **Next meeting date:** 03/09/2026[cite: 4, 6]
->>>>>>> 92b8a821d15568696b97ad30108cdedc6910bd47
 
 ---
 
