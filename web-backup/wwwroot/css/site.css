@@ -1,22 +1,266 @@
+/* =========================================================
+   1. BASE RESET & CONFIG
+   ========================================================= */
 html {
-  font-size: 14px;
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    html {
+        font-size: 16px;
+    }
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    background-color: #faf5ff;
+    color: #1e1b4b;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
+/* =========================================================
+   2. KHAI BÁO BI?N MÀU TÍM MODERN
+   ========================================================= */
+:root {
+    --main-purple: #7c3aed; /* Tím ch? ??o */
+    --main-purple-hover: #6d28d9; /* Tím ??m khi di chu?t */
+    --main-purple-light: #f3e8ff; /* Tím pastel nh?t */
+    --accent-gold: #f59e0b; /* Vàng H? Phách (Badge Chính ch?) */
+    --text-dark: #1e1b4b; /* Ch? t?i */
+    --bg-card: #ffffff;
+}
+
+/* =========================================================
+   3. HEADER & NAVIGATION
+   ========================================================= */
+.navbar-brand {
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--main-purple) !important;
+}
+
+.nav-link-custom {
+    color: #475569;
+    font-weight: 500;
+    margin: 0 8px;
+    transition: color 0.2s ease;
+}
+
+    .nav-link-custom:hover,
+    .nav-link-custom.active {
+        color: var(--main-purple) !important;
+        font-weight: 600;
+    }
+
+/* =========================================================
+   4. BUTTONS & INPUTS
+   ========================================================= */
+/* Focus Outline */
+.btn:focus,
+.form-control:focus,
+.form-select:focus {
+    box-shadow: 0 0 0 0.25rem rgba(124, 58, 237, 0.25) !important;
+    border-color: var(--main-purple) !important;
+}
+
+/* Nút vi?n Tím (??ng nh?p) */
+.btn-outline-purple {
+    color: var(--main-purple) !important;
+    border: 1.5px solid var(--main-purple) !important;
+    font-weight: 600;
+    border-radius: 50rem;
+}
+
+    .btn-outline-purple:hover {
+        background-color: var(--main-purple) !important;
+        color: #ffffff !important;
+    }
+
+/* Nút Tím ??c (??ng ký / Tìm ki?m) */
+.btn-purple {
+    background-color: var(--main-purple) !important;
+    border-color: var(--main-purple) !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    border-radius: 50rem;
+}
+
+    .btn-purple:hover {
+        background-color: var(--main-purple-hover) !important;
+        border-color: var(--main-purple-hover) !important;
+        color: #ffffff !important;
+    }
+
+/* =========================================================
+   5. HERO BANNER & KHUNG TÌM KI?M
+   ========================================================= */
+.hero-banner {
+    background: linear-gradient(rgba(15, 23, 42, 0.65), rgba(15, 23, 42, 0.65)), url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1600&q=80');
+    background-size: cover;
+    background-position: center;
+    padding: 80px 0 100px 0;
+    color: white;
+}
+
+.search-box-container {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 20px 25px -5px rgba(124, 58, 237, 0.15);
+    margin-top: -50px;
+}
+
+/* =========================================================
+   6. CARDS & BADGES (PHÒNG N?I B?T)
+   ========================================================= */
+.room-card {
+    border-radius: 14px;
+    border: 1px solid #e9d5ff;
+    overflow: hidden;
+    background: #ffffff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .room-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 24px rgba(124, 58, 237, 0.15);
+    }
+
+.badge-purple {
+    background-color: var(--main-purple);
+    color: #ffffff;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 6px;
+}
+
+.badge-gold {
+    background-color: var(--accent-gold);
+    color: #1e1b4b;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 6px;
+}
+
+/* =========================================================
+   7. FOOTER
+   ========================================================= */
+.footer-purple {
+    background-color: #1e1b4b;
+    color: #e9d5ff;
+}
+
+    .footer-purple a {
+        color: #cbd5e1;
+        text-decoration: none;
+    }
+
+        .footer-purple a:hover {
+            color: #ffffff;
+        }
+/* =========================================================
+   ÉP T?T C? NÚT FORM & NÚT ??NG NH?P / ??NG KÝ SANG MÀU TÍM
+   ========================================================= */
+
+/* 1. Nút ??ng Nh?p to ? gi?a form & Nút ??ng Ký ? Header */
+.btn-teal,
+.btn-success,
+.btn-primary,
+button[type="submit"],
+input[type="submit"] {
+    background-color: #7c3aed !important;
+    border-color: #7c3aed !important;
+    color: #ffffff !important;
+}
+
+    /* Hi?u ?ng rê chu?t vào nút */
+    .btn-teal:hover,
+    .btn-success:hover,
+    .btn-primary:hover,
+    button[type="submit"]:hover,
+    input[type="submit"]:hover {
+        background-color: #6d28d9 !important;
+        border-color: #6d28d9 !important;
+        color: #ffffff !important;
+    }
+
+/* 2. Nút vi?n "??ng Nh?p" ? góc trên Header */
+.btn-outline-teal,
+.btn-outline-primary {
+    color: #7c3aed !important;
+    border-color: #7c3aed !important;
+}
+
+    .btn-outline-teal:hover,
+    .btn-outline-primary:hover {
+        background-color: #7c3aed !important;
+        color: #ffffff !important;
+    }
+
+/* 3. Link "??ng ký ngay" bên d??i form */
+a {
+    color: #7c3aed;
+}
+
+    a:hover {
+        color: #6d28d9;
+    }
+/* =========================================================
+   T?I ?U TRUY C?P & ?I?U H??NG CHO FOOTER
+   ========================================================= */
+
+.footer-purple {
+    background-color: #6d28d9; /* Tím ??m chu?n ?? t??ng ph?n */
+    color: #ffffff;
+}
+
+    .footer-purple h5 {
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    /* Ch? mô t? & Link danh m?c */
+    .footer-purple p {
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+.footer-link {
+    color: rgba(255, 255, 255, 0.85) !important;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.2s ease-in-out;
+    display: inline-block;
+}
+
+    /* Hi?u ?ng khi rê chu?t vào link: ??i sang màu vàng & nhích nh? */
+    .footer-link:hover {
+        color: #f59e0b !important; /* Vàng h? phách n?i b?t */
+        transform: translateX(4px);
+        text-decoration: underline;
+    }
+
+/* Icon m?ng xã h?i */
+.social-icon {
+    color: #ffffff !important;
+    font-size: 1.3rem;
+    transition: transform 0.2s ease, color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 50%;
+    text-decoration: none;
+}
+
+    .social-icon:hover {
+        color: #1e1b4b !important;
+        background-color: #f59e0b;
+        transform: translateY(-3px);
+    }

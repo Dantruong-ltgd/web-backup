@@ -11,6 +11,8 @@ namespace web_backup.Data
         public DbSet<Room> Rooms { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Amenity> Amenities { get; set; }
+        public DbSet<Booking> Bookings { get; set; }
+        public DbSet<Invoice> Invoices { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

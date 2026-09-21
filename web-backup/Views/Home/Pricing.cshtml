@@ -1,0 +1,86 @@
+﻿@{
+    ViewData["Title"] = "Bảng Giá Dịch Vụ";
+}
+
+<div class="container my-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-uppercase mb-2" style="color: #7c3aed;">BẢNG GIÁ DỊCH VỤ ĐĂNG TIN</h2>
+        <p class="text-muted">Chọn gói tin phù hợp để tiếp cận hàng ngàn khách thuê mỗi ngày</p>
+    </div>
+
+    <div class="row g-4 justify-content-center align-items-center">
+        <!-- GÓI TIN THƯỜNG -->
+        <div class="col-lg-5 col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center h-100">
+                <h3 class="fw-bold text-dark mb-3">Tin Thường</h3>
+                <div class="mb-4">
+                    <span class="fs-1 fw-bold" style="color: #7c3aed;">0đ</span>
+                    <span class="text-muted">/ tin</span>
+                </div>
+
+                <ul class="list-unstyled text-start d-flex flex-column gap-3 mb-4 ps-3">
+                    <li class="d-flex align-items-center gap-2">
+                        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                        <span>Hiển thị tin 7 ngày</span>
+                    </li>
+                    <li class="d-flex align-items-center gap-2">
+                        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                        <span>Tối đa 5 hình ảnh</span>
+                    </li>
+                    <li class="d-flex align-items-center gap-2">
+                        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                        <span>Hỗ trợ tìm kiếm cơ bản</span>
+                    </li>
+                </ul>
+
+                <a asp-controller="RoomManager" asp-action="Create" class="btn btn-outline-teal rounded-pill py-2 fw-semibold w-100">
+                    Đăng Tin Ngay
+                </a>
+            </div>
+        </div>
+
+        <!-- GÓI TIN VIP NỔI BẬT -->
+        <div class="col-lg-5 col-md-6 position-relative">
+            <div class="card border-2 shadow-lg rounded-4 p-4 text-center position-relative" style="border-color: #7c3aed;">
+                <!-- Badge Phổ biến nhất -->
+                <div class="position-absolute top-0 start-50 translate-middle">
+                    <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold text-uppercase shadow-sm">
+                        PHỔ BIẾN NHẤT
+                    </span>
+                </div>
+
+                <h3 class="fw-bold text-dark mb-3 mt-2">Tin VIP Nổi Bật</h3>
+                <div class="mb-4">
+                    <span class="fs-1 fw-bold" style="color: #7c3aed;">49.000đ</span>
+                    <span class="text-muted">/ 7 ngày</span>
+                </div>
+
+                <ul class="list-unstyled text-start d-flex flex-column gap-3 mb-4 ps-3">
+                    <li class="d-flex align-items-center gap-2">
+                        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                        <span>Hiển thị trang nhất tìm kiếm</span>
+                    </li>
+                    <li class="d-flex align-items-center gap-2">
+                        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                        <span>Badge Tím nổi bật thu hút người xem</span>
+                    </li>
+                    <li class="d-flex align-items-center gap-2">
+                        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                        <span>Được đăng 2 bài viết</span>
+                    </li>
+                    <li class="d-flex align-items-center gap-2">
+                        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                        <span>Ưu tiên hỗ trợ kỹ thuật</span>
+                    </li>
+                </ul>
+
+                <!-- 💥 CẬP NHẬT: Thay thế thẻ <a> cũ bằng thẻ <form> này -->
+                <form asp-controller="Payment" asp-action="ProcessVipPayment" method="post">
+                    <button type="submit" class="btn btn-teal rounded-pill py-2 fw-semibold text-white w-100" style="background-color: #7c3aed; border: none;">
+                        Chọn Gói VIP
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

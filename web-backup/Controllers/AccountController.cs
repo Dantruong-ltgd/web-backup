@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.IO;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using web_backup.Models;
 using web_backup.ViewModels;
@@ -10,15 +12,18 @@ namespace PhongTro_PTSG.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IWebHostEnvironment _environment;
 
         public AccountController(
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            IWebHostEnvironment environment)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _roleManager = roleManager;
+            _environment = environment;
         }
 
         // GET: /Account/Login
@@ -128,6 +133,7 @@ namespace PhongTro_PTSG.Controllers
 
             return View(user);
         }
+
         // GET: /Account/EditProfile
         [Microsoft.AspNetCore.Authorization.Authorize]
         [HttpGet]
@@ -140,7 +146,8 @@ namespace PhongTro_PTSG.Controllers
             {
                 FullName = user.FullName,
                 PhoneNumber = user.PhoneNumber,
-                District = user.District
+                District = user.District,
+                AvatarUrl = user.AvatarUrl
             };
 
             return View(model);
@@ -156,6 +163,38 @@ namespace PhongTro_PTSG.Controllers
 
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return NotFound();
+
+            // --- XỬ LÝ LƯU ẢNH ĐẠI DIỆN NẾU CÓ FILE MỚI ---
+            if (model.AvatarFile != null && model.AvatarFile.Length > 0)
+            {
+                string uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads", "avatars");
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                // Xóa file ảnh cũ nếu đã tồn tại
+                if (!string.IsNullOrEmpty(user.AvatarUrl))
+                {
+                    string oldFilePath = Path.Combine(_environment.WebRootPath, user.AvatarUrl.TrimStart('/'));
+                    if (System.IO.File.Exists(oldFilePath))
+                    {
+                        System.IO.File.Delete(oldFilePath);
+                    }
+                }
+
+                // Đặt tên file ngẫu nhiên để tránh bị ghi đè trùng tên
+                string uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(model.AvatarFile.FileName);
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await model.AvatarFile.CopyToAsync(fileStream);
+                }
+
+                // Lưu đường dẫn vào model User
+                user.AvatarUrl = "/uploads/avatars/" + uniqueFileName;
+            }
 
             user.FullName = model.FullName;
             user.PhoneNumber = model.PhoneNumber;

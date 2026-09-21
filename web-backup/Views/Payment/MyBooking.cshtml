@@ -1,0 +1,65 @@
+﻿@model IEnumerable<web_backup.Models.Invoice>
+@{
+    ViewData["Title"] = "Lịch sử thanh toán & Hóa đơn";
+}
+
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-dark"><i class="bi bi-receipt me-2"></i>LỊCH SỬ THANH TOÁN CỦA TÔI</h3>
+        <a href="/Payment/Lookup" class="btn btn-outline-secondary rounded-pill px-3">
+            <i class="bi bi-search me-1"></i> Tra cứu theo mã
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center py-4 rounded-4 shadow-sm">
+            <i class="bi bi-info-circle fs-3 d-block mb-2"></i>
+            Bạn chưa có giao dịch đặt phòng hoặc mua đứt nào!
+        </div>
+    }
+    else
+    {
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Mã thanh toán (Mã HD)</th>
+                            <th>Tên phòng</th>
+                            <th>Số tiền</th>
+                            <th>Ngày giao dịch</th>
+                            <th>Hình thức</th>
+                            <th class="text-center">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="badge bg-primary fs-6 font-monospace">@item.InvoiceCode</span>
+                                </td>
+                                <td>
+                                    <strong class="text-dark">@(item.Booking?.Room?.Title ?? "Phòng trọ")</strong>
+                                </td>
+                                <td class="text-success fw-bold">@item.TotalAmount.ToString("N0") VNĐ</td>
+                                <td>@item.CreatedDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">
+                                        @(item.Booking?.TransactionType == "Buyout" ? "Mua đứt" : "Đặt cọc")
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <a asp-action="PrintInvoice" asp-route-id="@item.Id" class="btn btn-sm btn-outline-success rounded-pill px-3">
+                                        <i class="bi bi-printer me-1"></i> Xem / In hóa đơn
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

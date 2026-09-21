@@ -1,0 +1,63 @@
+﻿@model web_backup.Models.Invoice
+
+@{
+    ViewData["Title"] = "Chờ Xác Nhận Thanh Toán VIP";
+
+    // Tạo thông tin VietQR động
+    string bankId = "MB";
+    string accountNo = "0332860710";
+    string accountName = "TRUONG VAN BAP";
+    string description = $"THANH TOAN VIP {Model.InvoiceCode}";
+    string qrUrl = $"https://img.vietqr.io/image/{bankId}-{accountNo}-compact2.png?amount={Model.TotalAmount}&addInfo={Uri.EscapeDataString(description)}&accountName={Uri.EscapeDataString(accountName)}";
+}
+
+<div class="container my-5 text-center" style="max-width: 600px;">
+    <div class="card border-0 shadow-lg rounded-4 p-4">
+        <div class="mb-3">
+            <div id="loadingStatus" class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+        </div>
+
+        <h3 class="fw-bold text-primary mb-2">ĐANG CHỜ XÁC NHẬN THANH TOÁN</h3>
+        <p class="text-muted">Vui lòng quét mã QR bên dưới để thanh toán gói VIP. Hệ thống sẽ tự động chuyển đến trang tạo phòng sau khi hoàn tất.</p>
+
+        <div class="my-3 p-2 bg-light rounded-3 d-inline-block shadow-sm">
+            <img src="@qrUrl" alt="Mã QR VietQR" class="img-fluid rounded-3" style="max-width: 260px;" />
+        </div>
+
+        <div class="text-start bg-light p-3 rounded-3 mb-4 fs-6">
+            <p class="mb-1">Mã hóa đơn: <strong class="text-primary">@Model.InvoiceCode</strong></p>
+            <p class="mb-1">Số tiền cần thanh toán: <strong class="text-danger">@Model.TotalAmount.ToString("N0") VNĐ</strong></p>
+            <p class="mb-0">Nội dung chuyển khoản: <strong class="text-dark">@description</strong></p>
+        </div>
+
+        <div class="alert alert-warning small mb-3">
+            <i class="bi bi-clock-history me-1"></i> Trạng thái: <strong>Đang chờ Admin xác nhận qua Email</strong>
+        </div>
+
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary rounded-pill w-100">
+            Hủy / Trở về trang chủ
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Tự động kiểm tra trạng thái thanh toán ngầm mỗi 3 giây
+        const invoiceCode = '@Model.InvoiceCode';
+
+        const checkInterval = setInterval(function() {
+            fetch(`/Payment/CheckStatus?invoiceCode=${invoiceCode}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.isPaid) {
+                        clearInterval(checkInterval);
+
+                        // Thông báo thành công và chuyển hướng đến trang tạo phòng (ví dụ: RoomManager/Create)
+                        alert("Thanh toán thành công! Đã kích hoạt gói VIP. Chuyển đến trang tạo phòng.");
+                        window.location.href = '/RoomManager/Create'; // Điều chỉnh lại đường dẫn trang tạo phòng của bạn nếu khác
+                    }
+                })
+                .catch(error => console.error('Lỗi kiểm tra trạng thái:', error));
+        }, 3000);
+    </script>
+}

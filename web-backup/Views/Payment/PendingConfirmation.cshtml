@@ -1,0 +1,60 @@
+﻿@model web_backup.Models.Invoice
+@{
+    ViewData["Title"] = "Chờ xác nhận";
+}
+
+<div class="container my-5 d-flex justify-content-center">
+    <div class="card border-0 shadow-lg p-4 rounded-4 text-center" style="max-width: 550px; width: 100%;">
+        <div class="mb-3">
+            <div class="d-inline-flex align-items-center justify-content-center bg-primary text-white rounded-circle shadow" style="width: 80px; height: 80px;">
+                <i class="bi bi-envelope-check-fill fs-1"></i>
+            </div>
+        </div>
+
+        <h3 class="fw-bold text-dark mb-2">Đã gửi liên kết xác nhận!</h3>
+        <p class="text-muted mb-4">Chúng tôi đã gửi một email xác nhận thanh toán đến Gmail của bạn.</p>
+
+        <div class="bg-light p-3 rounded-3 text-start mb-4 border">
+            <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Mã hóa đơn:</span>
+                <span class="badge bg-primary fs-6 font-monospace">@Model.InvoiceCode</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Số tiền:</span>
+                <span class="fw-bold text-danger">@Model.TotalAmount.ToString("N0") VNĐ</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="text-muted">Trạng thái:</span>
+                <span class="badge bg-warning text-dark fw-bold">ĐANG ĐỢI XÁC NHẬN TRÊN GMAIL</span>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2 justify-content-center">
+            <a href="https://mail.google.com" target="_blank" class="btn btn-danger rounded-pill px-4 py-2 fw-semibold">
+                <i class="bi bi-google me-2"></i>Mở Gmail ngay
+            </a>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4 py-2 fw-semibold">
+                Quay lại Trang chủ
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- 💥 SCRIPT LẮNG NGHE TỰ ĐỘNG CHUYỂN TRANG NGAY TRÊN TAB HIỆN TẠI -->
+<script>
+    const invoiceCode = "@Model.InvoiceCode";
+
+    // Tự động kiểm tra trạng thái mỗi 2 giây
+    const checkInterval = setInterval(function() {
+        fetch('/Payment/CheckStatus?invoiceCode=' + invoiceCode)
+            .then(response => response.json())
+            .then(data => {
+                if (data.isPaid) {
+                    clearInterval(checkInterval);
+                    // Tự động chuyển trang hiện tại sang trang hóa đơn
+                    window.location.href = '/Payment/PrintInvoice/' + data.invoiceId;
+                }
+            })
+            .catch(err => console.error(err));
+    }, 2000);
+</script>

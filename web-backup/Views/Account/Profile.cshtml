@@ -8,9 +8,25 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm rounded-4 p-4">
                 <div class="text-center mb-4">
-                    <div class="bg-teal text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 70px; height: 70px; font-size: 2rem; background-color: #0d7a75;">
-                        <i class="bi bi-person-fill"></i>
-                    </div>
+                    <!-- ================= CỤM HIỂN THỊ ẢNH ĐẠI DIỆN ================= -->
+                    @if (!string.IsNullOrEmpty(Model.AvatarUrl))
+                    {
+                        <!-- Hiển thị ảnh đại diện khi người dùng đã cập nhật ảnh -->
+                        <img src="@Model.AvatarUrl"
+                             alt="@Model.FullName"
+                             class="rounded-circle object-fit-cover mb-2 border shadow-sm"
+                             style="width: 80px; height: 80px;" />
+                    }
+                    else
+                    {
+                        <!-- Hiển thị Icon mặc định khi chưa có ảnh -->
+                        <div class="bg-teal text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2 shadow-sm mx-auto"
+                             style="width: 80px; height: 80px; font-size: 2.2rem; background-color: #0d7a75;">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                    }
+                    <!-- ============================================================= -->
+
                     <h4 class="fw-bold mb-0">@Model.FullName</h4>
                     <span class="badge bg-light text-teal border mt-1">@ViewBag.RoleName</span>
                 </div>

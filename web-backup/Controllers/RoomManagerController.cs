@@ -88,7 +88,8 @@ namespace web_backup.Controllers
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", room.CategoryId);
             return View(room);
         }
-        // 1. Trang hiển thị Form thêm phòng mới (GET)
+
+        // 4. Trang hiển thị Form thêm phòng mới (GET)
         public async Task<IActionResult> Create()
         {
             var currentUser = await _userManager.GetUserAsync(User);
@@ -100,7 +101,7 @@ namespace web_backup.Controllers
             return View();
         }
 
-        // 2. Xử lý lưu phòng mới (POST)
+        // 5. Xử lý lưu phòng mới (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Room room)
@@ -113,6 +114,21 @@ namespace web_backup.Controllers
                 room.District = currentUser.District;
             }
 
+            // 💥 GÁN NGƯỜI TẠO VÀ TỰ ĐỘNG ĐƯA LÊN TIN VIP NẾU TÀI KHOẢN CÒN HẠN VIP
+            if (currentUser != null)
+            {
+                room.UserId = currentUser.Id; // Gán UserId cho phòng
+
+                if (currentUser.IsVip && currentUser.VipExpiryDate.HasValue && currentUser.VipExpiryDate.Value > DateTime.Now)
+                {
+                    room.IsFeatured = true; // Tự động bật Tin VIP / Nổi bật
+                }
+                else
+                {
+                    room.IsFeatured = false; // Bài đăng thường
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(room);
@@ -122,6 +138,51 @@ namespace web_backup.Controllers
 
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", room.CategoryId);
             return View(room);
+        }
+
+        // 6. Xử lý bật/tắt trạng thái Đã thuê / Mua qua AJAX (POST)
+        [HttpPost]
+        public async Task<IActionResult> ToggleStatus(int id)
+        {
+            var room = await _context.Rooms.FindAsync(id);
+            if (room == null) return NotFound();
+
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            // Kiểm tra phân quyền theo Quận nếu là Chủ trọ
+            if (User.IsInRole("ChuTro") && !string.Equals(room.District, currentUser?.District, StringComparison.OrdinalIgnoreCase))
+            {
+                return Forbid();
+            }
+
+            // Đảo trạng thái Đã thuê/Mua
+            room.IsRented = !room.IsRented;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true, isRented = room.IsRented });
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var room = await _context.Rooms.FindAsync(id);
+            if (room == null) return NotFound();
+
+            // 1. Tìm và xóa các Booking liên quan đến phòng này
+            var bookings = await _context.Bookings.Where(b => b.RoomId == id).ToListAsync();
+            foreach (var booking in bookings)
+            {
+                // Xóa luôn Invoice liên quan đến booking này (nếu có)
+                var invoices = await _context.Invoices.Where(i => i.BookingId == booking.Id).ToListAsync();
+                _context.Invoices.RemoveRange(invoices);
+            }
+            _context.Bookings.RemoveRange(bookings);
+
+            // 2. Sau đó mới tiến hành xóa phòng
+            _context.Rooms.Remove(room);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

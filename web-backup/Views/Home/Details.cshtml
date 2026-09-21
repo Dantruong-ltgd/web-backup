@@ -15,9 +15,19 @@
         <!-- Thông tin chi tiết phòng -->
         <div class="col-md-5">
             <div class="card border-0 shadow-sm rounded-4 p-4">
-                <span class="badge bg-teal w-auto mb-2 align-self-start px-3 py-2" style="background-color: #0d7a75;">
-                    @(Model.Category?.Name ?? "Phòng trọ")
-                </span>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="badge bg-teal w-auto px-3 py-2" style="background-color: #0d7a75;">
+                        @(Model.Category?.Name ?? "Phòng trọ")
+                    </span>
+
+                    <!-- Nút Thả tim góc trên -->
+                    <button type="button" id="btnHeartIcon" class="btn btn-outline-danger rounded-circle p-0 d-flex align-items-center justify-content-center shadow-sm"
+                            style="width: 40px; height: 40px;"
+                            onclick="toggleFavoriteDetail(@Model.Id)" title="Thả tim phòng này">
+                        <i id="heartIcon" class="bi @(Model.IsFeatured ? "bi-heart-fill text-danger" : "bi-heart text-secondary") fs-5"></i>
+                    </button>
+                </div>
+
                 <h3 class="fw-bold text-dark mb-3">@Model.Title</h3>
 
                 <h2 class="text-danger fw-bold mb-4">@Model.Price.ToString("N0") <small class="fs-6 text-muted">VNĐ/tháng</small></h2>
@@ -42,9 +52,19 @@
                 </div>
 
                 <div class="d-grid gap-2">
-                    <a href="tel:0901234567" class="btn btn-teal text-white py-3 rounded-pill fw-bold" style="background-color: #0d7a75;">
-                        <i class="bi bi-telephone-fill me-2"></i>Liên hệ chủ phòng ngay
+                    <!-- Nút Thêm/Bỏ Yêu thích (Hiện lên Trang chủ) -->
+                    <button type="button" id="btnFavoriteText" onclick="toggleFavoriteDetail(@Model.Id)"
+                            class="btn @(Model.IsFeatured ? "btn-danger" : "btn-outline-danger") py-2.5 rounded-pill fw-bold shadow-sm">
+                        <i id="btnFavoriteIcon" class="bi @(Model.IsFeatured ? "bi-heart-fill" : "bi-heart") me-2"></i>
+                        <span id="favoriteText">@(Model.IsFeatured ? "Đã yêu thích (Đang hiện ở Trang chủ)" : "Thêm vào Yêu thích (Hiện ở Trang chủ)")</span>
+                    </button>
+
+                    <!-- NÚT ĐẶT CỌC NGAY (Đã cập nhật chuyển hướng đến trang Đặt cọc) -->
+                    <a asp-controller="Payment" asp-action="Checkout" asp-route-roomId="@Model.Id" asp-route-type="Deposit"
+                       class="btn btn-teal text-white py-3 rounded-pill fw-bold shadow-sm text-center" style="background-color: #0d7a75;">
+                        <i class="bi bi-bookmark-check-fill me-2"></i>Đặt cọc ngay
                     </a>
+
                     <a href="/" class="btn btn-outline-secondary py-2 rounded-pill">
                         <i class="bi bi-arrow-left me-1"></i> Quay lại trang chủ
                     </a>
@@ -53,3 +73,29 @@
         </div>
     </div>
 </div>
+
+<!-- SCRIPT XỬ LÝ THẢ TIM AJAX -->
+@section Scripts {
+    <script>
+        function toggleFavoriteDetail(roomId) {
+            $.post('/Home/ToggleFavorite', { id: roomId }, function(res) {
+                if (res.success) {
+                    var isFav = res.isFeatured;
+                    if (isFav) {
+                        $('#heartIcon').removeClass('bi-heart text-secondary').addClass('bi-heart-fill text-danger');
+                        $('#btnFavoriteText').removeClass('btn-outline-danger').addClass('btn-danger');
+                        $('#btnFavoriteIcon').removeClass('bi-heart').addClass('bi-heart-fill');
+                        $('#favoriteText').text('Đã yêu thích (Đang hiện ở Trang chủ)');
+                    } else {
+                        $('#heartIcon').removeClass('bi-heart-fill text-danger').addClass('bi-heart text-secondary');
+                        $('#btnFavoriteText').removeClass('btn-danger').addClass('btn-outline-danger');
+                        $('#btnFavoriteIcon').removeClass('bi-heart-fill').addClass('bi-heart');
+                        $('#favoriteText').text('Thêm vào Yêu thích (Hiện ở Trang chủ)');
+                    }
+                } else {
+                    alert(res.message || 'Có lỗi xảy ra, vui lòng thử lại!');
+                }
+            });
+        }
+    </script>
+}
