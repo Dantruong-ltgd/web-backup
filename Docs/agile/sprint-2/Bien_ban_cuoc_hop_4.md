@@ -1,7 +1,11 @@
+<div align="center">
+
 # BIÊN BẢN HỌP NHÓM
 
 ## MID-SPRINT CHECK-IN (SPRINT 2)
 ### Dự án: Hệ Thống Quản Lý Thuê Phòng
+
+</div>
 
 ---
 
